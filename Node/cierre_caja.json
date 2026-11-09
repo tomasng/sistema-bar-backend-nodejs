@@ -1,0 +1,37 @@
+{
+  "fecha": "1/9/2026",
+  "precioFernet": 1500,
+  "recaudacionTotal": 6000,
+  "detalleVentas": [
+    {
+      "cliente": "Tomás",
+      "pago": 4000,
+      "vuelto": 2500,
+      "estado": "¡aca tenes el Fernandiño!"
+    },
+    {
+      "cliente": "Santiago",
+      "pago": 9000,
+      "vuelto": 7500,
+      "estado": "¡aca tenes el Fernandiño!"
+    },
+    {
+      "cliente": "Matias",
+      "pago": 700,
+      "vuelto": "sin vuelto",
+      "estado": "Andate a cagar Matias te falta $800 pa llevarte el Fernandiño"
+    },
+    {
+      "cliente": "Ale",
+      "pago": 2000,
+      "vuelto": 500,
+      "estado": "¡aca tenes el Fernandiño!"
+    },
+    {
+      "cliente": "Camila",
+      "pago": 10000,
+      "vuelto": 8500,
+      "estado": "¡aca tenes el Fernandiño!"
+    }
+  ]
+}

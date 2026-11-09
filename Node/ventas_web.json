@@ -1,0 +1,12 @@
+[
+  {
+    "cliente": "matias ",
+    "trago": "fernet",
+    "precioCobrado": 2000,
+    "pagoCon": 299930,
+    "vuelto": 297930,
+    "exito": true,
+    "mensaje": "¡Listo el trago! matias  compró fernet por el monto de $2000. Su vuelto es de $297930",
+    "fechaHora": "11/9/2026"
+  }
+]

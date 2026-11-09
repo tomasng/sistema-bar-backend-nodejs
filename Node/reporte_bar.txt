@@ -1,0 +1,8 @@
+=== REPORTE DE CLIENTES HABILITADOS===
+
+- Nombre: Tomás | Edad: 30 | Cash perri: $5000
+- Nombre: Catalina | Edad: 21 | Cash perri: $60000
+- Nombre: Elsa Pito | Edad: 27 | Cash perri: $3000
+- Nombre: El Neuen | Edad: 19 | Cash perri: $2000
+- Nombre: Perrri con 3 erres | Edad: 20 | Cash perri: $15000
+- Nombre: Bestia | Edad: 18 | Cash perri: $1500

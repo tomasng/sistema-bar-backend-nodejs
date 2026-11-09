@@ -1,0 +1,37 @@
+// Este es el schema de Prisma - el "plano" de nuestra base de datos.
+// Prisma lo lee y genera tanto la DB como el cliente TypeScript.
+
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo Trago: representa cada bebida del menú con su precio y stock
+model Trago {
+  id     Int     @id @default(autoincrement())
+  nombre String  @unique
+  precio Int
+  stock  Int
+
+  // Relación: un Trago puede tener muchas Ventas
+  ventas Venta[]
+}
+
+// Modelo Venta: registra cada transacción exitosa del bar
+model Venta {
+  id            Int      @id @default(autoincrement())
+  cliente       String
+  tragoId       Int
+  precioCobrado Int
+  vuelto        Int
+  fecha         DateTime @default(now())
+
+  // Relación: cada Venta pertenece a un Trago (JOIN automático con Prisma)
+  trago         Trago    @relation(fields: [tragoId], references: [id])
+}
+

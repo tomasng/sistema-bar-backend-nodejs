@@ -1,0 +1,162 @@
+================================================================================
+                    HISTÓRICO DE CONVERSACIONES Y CLASES
+                      (Sistema de Gestión Perrísima del Bar)
+================================================================================
+
+[02/11/2026 - Configuración de Respaldo, Reglas de Mr Charly y Comando de Cierre]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Solicitó agregar en AGENTS.md una regla para que la conversación se
+     guarde junto con todo lo aprendido en la ruta de aprendizaje y la marca en el
+     Roadmap únicamente cuando escriba exactamente "finalizar tarea" (sin ningún
+     texto adicional).
+   - Mr Charly: Actualizó AGENTS.md con el disparador estricto "finalizar tarea".
+   - Usuario: Hizo una prueba escribiendo "okey finalizar tarea".
+   - Mr Charly: Detectó la palabra extra ("okey") y bloqueó la ejecución,
+     validando que el filtro estricto funciona correctamente.
+   - Usuario: Explicó que anteriormente tuvo que reinstalar Antigravity y se
+     perdieron las conversaciones internas del programa, por lo que pidió crear
+     un histórico de conversaciones dentro de la carpeta Node (y mañana armar
+     el respaldo en la nube). También consultó si manteníamos el nombre "Mr Charly".
+   - Mr Charly: Creó Node/historico_conversaciones.txt, dejó asentada su identidad
+     como "Mr Charly" en AGENTS.md y ejecutó el cierre formal al recibir el
+     comando exacto "finalizar tarea".
+
+2. Archivos Creados / Actualizados en la Sesión:
+   - AGENTS.md: Identidad "Mr Charly" y flujo de 3 pasos para "finalizar tarea".
+   - Node/historico_conversaciones.txt: Registro histórico local de todas las charlas.
+   - Node/resumen_aprendizaje.txt: Documentación del flujo de respaldo y reglas.
+   - ROADMAP.md: Registro del hito de configuración y próximo paso (Prisma ORM).
+
+3. Próximo Objetivo Acordado:
+   - Configurar respaldo en la nube mañana.
+   - Retomar Fase 3 del Roadmap: ORM Moderno (Prisma ORM).
+
+================================================================================
+
+[02/11/2026 (Tarde) - Prisma ORM: Generación del Cliente, .upsert() y .findMany()]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Retomó la clase por la tarde e indicó dejar el respaldo en la nube
+     para la noche y avanzar con Prisma ORM en app22_prisma.js.
+   - Mr Charly: Explicó la diferencia entre SQL puro (app21_sql_ventas.js) y
+     Prisma ORM (métodos JavaScript basados en Promesas con async/await).
+   - Paso 1 (Ajuste en schema.prisma): Se configuró `provider = "prisma-client-js"`
+     dentro de `generator client` para compatibilidad con CommonJS (`require`).
+     * Se corrigió un typo inicial (`prisma-clien-js` -> `prisma-client-js`) y se
+       ejecutó `npx prisma generate` con éxito.
+   - Paso 2 (Conexión y carga en app22_prisma.js):
+     * Se instanció `const prisma = new PrismaClient()`.
+     * Se poblaron los tragos iniciales ('fernet', 'gin tonic', 'cerveza') usando
+       `prisma.trago.upsert({ where, update, create })`.
+     * Aprendizaje práctico de Modelos Tipados: Prisma detectó automáticamente un
+       typo en `prrecio: 2000` antes de impactar en la base de datos. Tras
+       corregirlo a `precio: 2000` y ejecutar `node app22_prisma.js`, se listó la
+       carta completa con `prisma.trago.findMany()` y `console.table()`.
+   - Paso 3 (Presentado para continuar en la próxima sesión):
+     * Se explicó la estructura de `realizarVenta()` con Prisma (`findUnique`,
+       `venta.create` y `trago.update` con `{ decrement: 1 }`).
+
+2. Archivos Creados / Actualizados en la Sesión:
+   - Node/prisma/schema.prisma: Ajuste a `provider = "prisma-client-js"`.
+   - Node/app22_prisma.js: Conexión con `PrismaClient`, carga con `.upsert()`,
+     lectura con `.findMany()` y desconexión con `prisma.$disconnect()`.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Por la noche: Configurar respaldo en la nube.
+   - En código: Completar la función `realizarVenta()` y relaciones 1 a muchos
+     (`include: { trago: true }`) en `app22_prisma.js`.
+
+================================================================================
+
+[03/11/2026 - Implementación de realizarVenta() con Prisma ORM y Relaciones]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Consultó dónde ubicar el bloque `// 4. SIMULAR VENTAS EN LA BARRA`
+     con las llamadas `await realizarVenta(...)`.
+   - Mr Charly: Indicó ubicarlas dentro de `async function main()`, justo debajo
+     de `console.table(carta);` y antes de la llave de cierre `}`, ya que usan
+     `await` y deben ejecutarse antes de `prisma.$disconnect()`.
+   - Depuración en `realizarVenta()` (app22_prisma.js):
+     * Se detectaron y corrigieron dos errores de tipeo en la función:
+       1. Línea 18: `prisma.trago.findUnic` -> `prisma.trago.findUnique`.
+       2. Línea 40: `prisma.venta.create8(` -> `prisma.venta.create(`.
+     * Tras corregirlos, `realizarVenta()` quedó 100% operativa creando ventas
+       relacionadas (`tragoId: trago.id`) y descontando stock con `{ decrement: 1 }`.
+   - Paso 4 (Presentado en chat):
+     * Se explicó cómo armar el reporte con `JOIN` automático de Prisma usando
+       `include: { trago: true }` dentro de `prisma.venta.findMany()` y el cierre
+       de caja con `prisma.venta.aggregate({ _count: true, _sum: { precioCobrado: true } })`.
+
+2. Archivos Actualizados en la Sesión:
+   - Node/app22_prisma.js: Función `realizarVenta()` completa y llamadas en `main()`.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Probar en `app22_prisma.js` el bloque 5 y 6 (`include: { trago: true }` y
+     `.aggregate()`) o avanzar a Fase 4 (Seguridad con `bcrypt`) / Respaldo en la nube.
+
+================================================================================
+
+[04/11/2026 - Cierre de Reportes en Prisma (app22) e Inicio de Bcrypt (app23)]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Copió los bloques 5 (`include: { trago: true }`) y 6 (`.aggregate()`)
+     en `app22_prisma.js` y pidió revisar errores.
+   - Mr Charly: Verificó que no había errores de sintaxis ni de ejecución y señaló
+     agregar `console.table(tablaReporte);` en la línea 118 para visualizar la
+     tabla combinada en pantalla.
+   - Usuario: Agregó la línea, ejecutó `node app22_prisma.js` con éxito y dio por
+     cerrada al 100% la práctica de Prisma ORM (Fase 3).
+   - Inicio de Fase 4 (Seguridad con `bcrypt`):
+     * Se instaló la librería oficial `bcrypt` (`npm install bcrypt`).
+     * Se creó el archivo `Node/app23_bcrypt.js`.
+     * El usuario escribió la función `registrarUsuario(nombre, passwordPlana, rol)`
+       implementando `const saltRounds = 10` y `await bcrypt.hash(passwordPlana, saltRounds)`
+       para guardar únicamente `passwordHash` en `usuariosDB`.
+
+2. Archivos Creados / Actualizados en la Sesión:
+   - Node/app22_prisma.js: Agregado `console.table(tablaReporte)` y validado.
+   - Node/package.json: Instalada dependencia `bcrypt` (`^6.0.0`).
+   - Node/app23_bcrypt.js: Creada la función `registrarUsuario()` con `bcrypt.hash()`.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Completar la función `main()` en `app23_bcrypt.js` para probar el registro
+     y agregar la Parte 2: validación de Login con `bcrypt.compare()`.
+
+================================================================================
+
+[06/11/2026 - Cierre de Bcrypt (app23_bcrypt.js) e Inicio de JWT (app24_jwt.js)]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Completó `main()` en `app23_bcrypt.js` para registrar usuarios y
+     luego sumó la función `iniciarSesion(nombre, passwordIngresada)` con
+     `await bcrypt.compare(passwordIngresada, usuario.passwordHash)`.
+   - Mr Charly: Revisó `app23_bcrypt.js`, detectó un único error de tipeo en la
+     línea 80 (`usuariosBD` en lugar de `usuariosDB`), y tras corregirlo el
+     script corrió al 100% validando claves correctas, claves falsas y usuarios
+     inexistentes.
+   - Inicio de Autenticación con JWT (`jsonwebtoken`):
+     * Se explicó la metáfora de la "Pulsera VIP firmada" (`jwt.sign` y `jwt.verify`).
+     * El usuario instaló `jsonwebtoken` (`npm install jsonwebtoken`), agregó
+       `JWT_SECRET=selloSecretoDelBarPerrisimo2026` en `Node/.env` y creó el
+       archivo `Node/app24_jwt.js`.
+     * Mr Charly dejó presentada en el chat la Parte 1 de `app24_jwt.js`
+       (servidor Express con rutas `POST /register` y `POST /login` emitiendo el
+       token con `jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' })`).
+
+2. Archivos Creados / Actualizados en la Sesión:
+   - Node/app23_bcrypt.js: Completado al 100% (`bcrypt.hash` y `bcrypt.compare`).
+   - Node/package.json: Instalada dependencia `jsonwebtoken` (`^9.0.3`).
+   - Node/.env: Agregada variable `JWT_SECRET`.
+   - Node/app24_jwt.js: Archivo creado, listo para escribir la Parte 1.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Escribir en `app24_jwt.js` la Parte 1 (`/register` y `/login` con `jwt.sign`)
+     y continuar con la Parte 2 (Middleware `verificarToken` con `jwt.verify` y
+     control de roles RBAC).
+
+================================================================================

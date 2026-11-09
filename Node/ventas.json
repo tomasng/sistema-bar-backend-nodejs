@@ -1,0 +1,35 @@
+[
+  {
+    "cliente": "nauren",
+    "trago": "whisky",
+    "precioCobrado": 3500,
+    "pagoCon": 70000,
+    "vuelto": 66500,
+    "stockRestante": 3,
+    "exito": true,
+    "mensaje": "¡Listo el trago! nauren compró whisky por $3500. Su vuelto es de $66500. (Quedan 3 en stock)",
+    "fechaHora": "2/10/2026, 03:27:36"
+  },
+  {
+    "cliente": "nauren",
+    "trago": "whisky",
+    "precioCobrado": 3500,
+    "pagoCon": 70000,
+    "vuelto": 66500,
+    "stockRestante": 2,
+    "exito": true,
+    "mensaje": "¡Listo el trago! nauren compró whisky por $3500. Su vuelto es de $66500. (Quedan 2 en stock)",
+    "fechaHora": "2/10/2026, 03:27:36"
+  },
+  {
+    "cliente": "Neuen",
+    "trago": "fernet",
+    "precioCobrado": 2000,
+    "pagoCon": 5000,
+    "vuelto": 3000,
+    "stockRestante": 2,
+    "exito": true,
+    "mensaje": "¡Listo el trago! Neuen compró fernet por $2000. Su vuelto es de $3000. (Quedan 2 en stock)",
+    "fechaHora": "27/10/2026, 02:30:00"
+  }
+]

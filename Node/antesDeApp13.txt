@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Barra del BAR</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 380px;
+        }
+
+        h1 {
+            color: #38bdf8;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            margin-top: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #0284c7;
+            color: white;
+        }
+
+        .precios-box {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 12px;
+            border: 1px dashed #475569;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="card">
+        <h1>🍸 Barra del Bar</h1>
+        <p style="text-align: center; color: #94a3b8; font-size: 14px;">Hacé tu pedido en vivo</p>
+
+        <!-- Formulario que envía los datos a la ruta /atender del servidor -->
+        <form action="/atender" method="post">
+            <label>👤 Tu Nombre:</label>
+            <input type="text" name="nombre" placeholder="Ej: Tomas" required>
+            <label>🎂 Tu Edad:</label>
+            <input type="number" name="edad" placeholder="Ej: 25" required>
+            <label>💵 Tu Dinero en Efectivo ($):</label>
+            <input type="number" name="cash" placeholder="Ej: 5000" required>
+            <label>🍹 Elegí tu Trago:</label>
+            <select name="trago">
+                <option value="fernet">Fernet ($2000)</option>
+                <option value="birra">Birra ($1200)</option>
+                <option value="ginTonic">Gin Tonic ($2500)</option>
+                <option value="whisky">Whisky ($3500)</option>
+                <option value="gaseosa">Gaseosa ($800)</option>
+                <option value="agua">Agua ($500)</option>
+            </select>
+            <button type="submit">🍸 ¡Pedir Trago!</button>
+        </form>
+        <div class="precios-box">
+            <strong>📌 Nota:</strong> Los menores solo pueden pedir gaseosa o agua.
+        </div>
+    </div>
+</body>
+
+</html>

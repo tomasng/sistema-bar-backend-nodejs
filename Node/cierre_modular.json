@@ -1,0 +1,57 @@
+{
+  "fecha": "4/9/2026",
+  "recaudacionTotal": 8300,
+  "totalClientesAtendidos": 6,
+  "detallesTickets": [
+    {
+      "cliente": "Tomás",
+      "trago": "fernet",
+      "precioCobrado": 2000,
+      "pagoCon": 5000,
+      "vuelto": 3000,
+      "exito": true,
+      "mensaje": "¡Listo el trago! Tomás compró fernet por el monto de $2000. Su vuelto es de $3000"
+    },
+    {
+      "cliente": "Catalina",
+      "trago": "whisky",
+      "precioCobrado": 3500,
+      "pagoCon": 60000,
+      "vuelto": 56500,
+      "exito": true,
+      "mensaje": "¡Listo el trago! Catalina compró whisky por el monto de $3500. Su vuelto es de $56500"
+    },
+    {
+      "cliente": "El salamin",
+      "trago": "birra",
+      "exito": false,
+      "vuelto": 0,
+      "mensaje": "Rebotado: El salamin tiene 16 años y no le puedo vender alcohol"
+    },
+    {
+      "cliente": "Pedrito",
+      "trago": "gaseosa",
+      "precioCobrado": 800,
+      "pagoCon": 1000,
+      "vuelto": 200,
+      "exito": true,
+      "mensaje": "¡Listo el trago! Pedrito compró gaseosa por el monto de $800. Su vuelto es de $200"
+    },
+    {
+      "cliente": "Elsa Pito",
+      "trago": "ginTonic",
+      "exito": false,
+      "vuelto": 0,
+      "mensaje": " No te alcanza, Elsa Pito. Te falta $1500 para el coctel ginTonic"
+    },
+    {
+      "cliente": "El Neuen",
+      "trago": "fernet",
+      "precioCobrado": 2000,
+      "pagoCon": 2000,
+      "vuelto": 0,
+      "exito": true,
+      "mensaje": "¡Listo el trago! El Neuen compró fernet por el monto de $2000. Su vuelto es de $0"
+    }
+  ]
+}

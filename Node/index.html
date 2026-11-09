@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barra del BAR (API REST)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        h1 {
+            color: #38bdf8;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            margin-top: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #0284c7;
+            color: white;
+        }
+
+        /* Caja de stock en vivo */
+        .stock-box {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid #334155;
+            font-size: 13px;
+        }
+
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dashed #334155;
+        }
+
+        /* Mensaje de resultado (Ticket en vivo) */
+        #mensaje-resultado {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .exito {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #4ade80;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #f87171;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>🍸 Barra del Bar</h1>
+        <p style="text-align: center; color: #94a3b8; font-size: 14px;">Pedidos en tiempo real con API REST</p>
+        <!-- Formulario (ya no tiene action ni method porque usamos JavaScript) -->
+        <form id="form-bar">
+            <label>👤 Tu Nombre:</label>
+            <input type="text" id="nombre" placeholder="Ej: Tomas" required>
+            <label>🎂 Tu Edad:</label>
+            <input type="number" id="edad" placeholder="Ej: 25" required>
+            <label>💵 Tu Dinero en Efectivo ($):</label>
+            <input type="number" id="cash" placeholder="Ej: 5000" required>
+            <label>🍹 Elegí tu Trago:</label>
+            <select id="trago">
+                <option value="fernet">Fernet ($2000)</option>
+                <option value="birra">Birra ($1200)</option>
+                <option value="ginTonic">Gin Tonic ($2500)</option>
+                <option value="whisky">Whisky ($3500)</option>
+                <option value="gaseosa">Gaseosa ($800)</option>
+                <option value="agua">Agua ($500)</option>
+            </select>
+            <button type="submit" id="btn-pedir">🍸 ¡Pedir Trago!</button>
+        </form>
+        <!-- Caja donde mostraremos el resultado del pedido -->
+        <div id="mensaje-resultado"></div>
+        <!-- Caja del Stock en Vivo -->
+        <div class="stock-box">
+            <h4 style="margin: 0 0 8px 0; color: #38bdf8; text-align: center;">📦 Stock en Barra</h4>
+            <div id="lista-stock">Cargando inventario...</div>
+        </div>
+    </div>
+    <!-- ========================================================= -->
+    <!--  JAVASCRIPT DEL CLIENTE (CONSUME LA API REST CON FETCH)   -->
+    <!-- ========================================================= -->
+    <script>
+        const listaStock = document.getElementById('lista-stock');
+        const formBar = document.getElementById('form-bar');
+        const mensajeResultado = document.getElementById('mensaje-resultado');
+        // 1. Función para consultar el Stock a la API (GET /api/stock)
+        async function cargarStock() {
+            try {
+                const respuesta = await fetch('/api/stock');
+                const stock = await respuesta.json();
+                // Dibujamos cada trago y su cantidad
+                listaStock.innerHTML = Object.entries(stock).map(([trago, cant]) => {
+                    const color = cant > 0 ? '#22c55e' : '#ef4444';
+                    const estado = cant > 0 ? `${cant} disponibles` : '⛔ AGOTADO';
+                    return `
+                        <div class="stock-item">
+                            <span style="text-transform: capitalize;">🍸 ${trago}</span>
+                            <strong style="color: ${color};">${estado}</strong>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                listaStock.innerHTML = '<span style="color:#ef4444;">Error al cargar stock</span>';
+            }
+        }
+        // 2. Evento para capturar el envío del formulario (POST /api/atender)
+        formBar.addEventListener('submit', async (evento) => {
+            // Evitamos que el formulario recargue la página
+            evento.preventDefault();
+            // Armamos el objeto con los datos ingresados
+            const pedido = {
+                nombre: document.getElementById('nombre').value,
+                edad: Number(document.getElementById('edad').value),
+                cash: Number(document.getElementById('cash').value),
+                trago: document.getElementById('trago').value
+            };
+            try {
+                // Enviamos el pedido en formato JSON mediante POST
+                const respuesta = await fetch('/api/atender', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(pedido)
+                });
+                const ticket = await respuesta.json();
+                // Mostramos el resultado con estilo según éxito o rechazo
+                mensajeResultado.style.display = 'block';
+                mensajeResultado.className = ticket.exito ? 'exito' : 'error';
+                mensajeResultado.innerHTML = `
+                    <div>${ticket.mensaje}</div>
+                    ${ticket.vuelto !== undefined ? `<div style="margin-top: 5px;">💰 Vuelto: $${ticket.vuelto}</div>` : ''}
+                `;
+                // Volvemos a consultar el stock para que se actualice el número en pantalla
+                await cargarStock();
+            } catch (error) {
+                mensajeResultado.style.display = 'block';
+                mensajeResultado.className = 'error';
+                mensajeResultado.textContent = '❌ Error de conexión con el servidor.';
+            }
+        });
+        // 3. Cargamos el stock apenas se abre la página
+        cargarStock();
+    </script>
+</body>
+
+</html>

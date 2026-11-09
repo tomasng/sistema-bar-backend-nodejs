@@ -1,0 +1,928 @@
+================================================================================
+                    GUÍA Y RESUMEN DE JAVASCRIPT & NODE.JS
+                      (Sistema de Gestión Perrísima del Bar)
+================================================================================
+
+1. VARIABLES Y CONSTANTES
+--------------------------------------------------------------------------------
+En JavaScript usamos dos formas principales para guardar datos en memoria:
+
+  * const: Para valores constantes que NO van a cambiar ni reasignarse.
+    Ejemplo:
+      const nombre = "Tomás";
+      const precioFernet = 2000;
+
+  * let: Para variables cuyo valor PUEDE cambiar a lo largo del programa.
+    Ejemplo:
+      let edad = 30;
+      let reporte = "=== REPORTE ===";
+
+
+2. CONDICIONALES (Tomar Decisiones)
+--------------------------------------------------------------------------------
+Permiten ejecutar bloques de código solo si se cumple una condición:
+
+  * Operadores de comparación comunes:
+      >   Mayor que
+      <   Menor que
+      >=  Mayor o igual que
+      <=  Menor o igual que
+      === Estrictamente igual (compara valor y tipo de dato)
+      !== Distinto de
+
+  Ejemplo:
+    if (edad >= 18) {
+        console.log("Puede ingresar al bar");
+    } else {
+        console.log("No puede ingresar por ser menor");
+    }
+
+
+3. TEMPLATE LITERALS (Interpolación de Texto)
+--------------------------------------------------------------------------------
+Usando comillas invertidas (backticks: ` `), podemos mezclar texto con variables
+fácilmente usando la sintaxis ${variable} sin necesidad de concatenar con '+':
+
+  Ejemplo:
+    const mensaje = `Hola ${nombre}, el fernet cuesta $${precioFernet}`;
+
+
+4. FUNCIONES (Bloques Reutilizables de Código)
+--------------------------------------------------------------------------------
+Agrupan instrucciones que reciben parámetros y pueden devolver un resultado (return).
+
+  Ejemplo:
+    function procesarCliente(cliente) {
+        if (cliente.edad < 18) {
+            return `Stop ${cliente.nombre}, eres menor de edad.`;
+        }
+        if (cliente.cash < precioFernet) {
+            return `No te alcanza el dinero, ${cliente.nombre}.`;
+        }
+        const vuelto = cliente.cash - precioFernet;
+        return `Toma tu fernet ${cliente.nombre}. Vuelto: $${vuelto}`;
+    }
+
+
+5. ARREGLOS DE OBJETOS (Estructuras de Datos / "Base de Datos en Memoria")
+--------------------------------------------------------------------------------
+Un objeto agrupa propiedades en pares clave-valor { clave: valor }.
+Un arreglo [ ] permite guardar una lista de objetos.
+
+  Ejemplo:
+    const clientes = [
+        { nombre: "Tomás", edad: 30, cash: 5000 },
+        { nombre: "Catalina", edad: 21, cash: 60000 },
+        { nombre: "El salamin", edad: 17, cash: 1500 },
+        { nombre: "Elsa Pito", edad: 27, cash: 3000 },
+        { nombre: "El Neuen", edad: 19, cash: 2000 },
+        { nombre: "Perrri con 3 erres", edad: 20, cash: 15000 },
+        { nombre: "Bestia", edad: 18, cash: 1500 }
+    ];
+
+
+6. BUCLE FOR...OF (Recorrer Listas)
+--------------------------------------------------------------------------------
+Permite iterar de forma limpia y directa sobre cada elemento de un arreglo:
+
+  Ejemplo:
+    for (const c of clientes) {
+        const resultado = procesarCliente(c);
+        console.log(resultado);
+    }
+
+
+7. MÉTODOS MODERNOS: .filter() Y .find()
+--------------------------------------------------------------------------------
+  a) .filter():
+     Crea un NUEVO arreglo con todos los elementos que cumplan la condición.
+     Ejemplo:
+       const mayores = clientes.filter(cliente => cliente.edad >= 18);
+       console.log(`Total habilitados: ${mayores.length}`);
+
+  b) .find():
+     Devuelve el PRIMER elemento que coincide exactamente con la condición (o undefined si no existe).
+     Ejemplo:
+       const clienteBuscado = clientes.find(cliente => cliente.nombre === "El Neuen");
+       console.log(clienteBuscado.cash); // 2000
+
+
+8. MÉTODO .map() (Transformar Listas - Visto en app3.js)
+--------------------------------------------------------------------------------
+Toma cada elemento del arreglo, le aplica una transformación y devuelve un
+NUEVO arreglo con los elementos transformados (mantiene la misma cantidad de elementos).
+
+  Ejemplo simple (duplicar números):
+    const precios = [1000, 2000, 3000];
+    const duplicados = precios.map(p => p * 2); // [2000, 4000, 6000]
+
+  Ejemplo avanzado con if/else (generar tickets de bar):
+    const tickets = clientes.map(cliente => {
+        if (cliente.cash >= PRECIO_FERNET) {
+            return {
+                cliente: cliente.nombre,
+                pago: cliente.cash,
+                vuelto: cliente.cash - PRECIO_FERNET,
+                estado: "¡aca tenes el Fernandiño!"
+            };
+        } else {
+            const falta = PRECIO_FERNET - cliente.cash;
+            return {
+                cliente: cliente.nombre,
+                pago: cliente.cash,
+                vuelto: "sin vuelto",
+                estado: `Andate a cagar ${cliente.nombre} te falta $${falta}`
+            };
+        }
+    });
+
+
+9. MÉTODO .reduce() (Acumuladores y Totales - Visto en app3.js)
+--------------------------------------------------------------------------------
+Reduce toda una lista de elementos a UN SOLO VALOR final (sumas, totales, etc.).
+Recibe:
+  - acumulador: La alcancía donde se suma vuelta tras vuelta.
+  - elementoActual: El item actual del arreglo.
+  - valorInicial: El valor con el que arranca el acumulador (ej: 0).
+
+  Ejemplo (calcular recaudación total del bar):
+    const totalRecaudado = tickets.reduce((acumulador, ticket) => {
+        if (ticket.vuelto !== "sin vuelto") {
+            return acumulador + PRECIO_FERNET;
+        }
+        return acumulador;
+    }, 0);
+    console.log(`Total recaudado: $${totalRecaudado}`);
+
+
+10. EXPORTAR EN FORMATO JSON (Módulo 'fs' + JSON.stringify - Visto en app3.js)
+--------------------------------------------------------------------------------
+A diferencia de un archivo .txt simple, el formato JSON guarda los datos con su
+estructura intacta (arreglos, objetos, números, textos) para ser leídos por otros programas.
+
+  * new Date().toLocaleDateString(): Obtiene la fecha actual en formato texto.
+  * JSON.stringify(objeto, null, 2): Convierte el objeto de JS a texto JSON prolijo.
+  * fs.writeFileSync('archivo.json', textoJson): Escribe el archivo en disco.
+
+  Ejemplo:
+    const fs = require('fs');
+
+    const balanceNoche = {
+        fecha: new Date().toLocaleDateString(),
+        precioFernet: PRECIO_FERNET,
+        recaudacionTotal: totalRecaudado,
+        detalleVentas: tickets
+    };
+
+    const datoJson = JSON.stringify(balanceNoche, null, 2);
+    fs.writeFileSync('cierre_caja.json', datoJson);
+
+
+11. RUTAS RELATIVAS Y NAVEGACIÓN DE CARPETAS (Visto en app4.js)
+--------------------------------------------------------------------------------
+Indican a Node.js dónde encontrar archivos en el disco:
+
+  * './archivo.ext'      -> En la MISMA carpeta actual.
+  * '../archivo.ext'     -> SUBIR 1 carpeta hacia afuera (carpeta padre).
+  * '../../archivo.ext'  -> SUBIR 2 carpetas hacia afuera.
+  * './carpeta/arch.ext' -> ENTRAR a una subcarpeta que está adentro.
+
+
+12. LEER ARCHIVOS JSON DEL DISCO (fs.readFileSync + JSON.parse - Visto en app4.js)
+--------------------------------------------------------------------------------
+Permite recuperar datos guardados en disco y volver a convertirlos en objetos vivos de JS:
+
+  1. Leer texto plano del disco:
+       const archivoTexto = fs.readFileSync('cierre_caja.json', 'utf-8');
+
+  2. Convertir texto JSON a Objeto JavaScript:
+       const datosCierre = JSON.parse(archivoTexto);
+
+  3. Acceder a sus propiedades directamente:
+       console.log(datosCierre.fecha);
+       console.log(datosCierre.recaudacionTotal);
+       console.log(datosCierre.detalleVentas.length);
+
+
+13. ANÁLISIS ESTADÍSTICO DE DATOS (Métricas del Negocio - Visto en app4.js)
+--------------------------------------------------------------------------------
+Una vez recuperados los datos con JSON.parse, podemos aplicar métodos para extraer estadísticas:
+
+  a) Contar ventas exitosas vs rebotados (.filter):
+       const exitosos = tickets.filter(t => t.vuelto !== "sin vuelto");
+       const rebotados = tickets.filter(t => t.vuelto === "sin vuelto");
+
+  b) Encontrar el cliente VIP / Mayor valor (.reduce comparativo):
+       const clienteVIP = tickets.reduce((maximo, ticketActual) => {
+           return ticketActual.pago > maximo.pago ? ticketActual : maximo;
+       });
+       // Devuelve el objeto completo del cliente con mayor pago (ej: Camila con $10000)
+
+  c) Calcular el promedio de dinero:
+       const totalCash = tickets.reduce((acum, t) => acum + t.pago, 0);
+       const promedio = totalCash / tickets.length;
+
+
+14. RECORDATORIOS Y TIPS IMPORTANTES
+--------------------------------------------------------------------------------
+  * require('fs'): No olvidar la palabra 'require' al importar módulos nativos:
+      const fs = require('fs'); // Correcto
+      const fs = ('fs');        // Error
+
+  * Arrow Functions (=>) vs Mayor o Igual (>=):
+      cliente => { ... }   // Función flecha (correcto)
+      cliente >= { ... }   // Comparador mayor o igual (error)
+
+  * Guardar antes de ejecutar:
+      Siempre presionar Ctrl + S en el editor antes de correr 'node nombre_archivo.js'.
+
+
+
+
+15. MODULARIZACIÓN EN NODE.JS (module.exports y require - Visto en app5.js)
+--------------------------------------------------------------------------------
+A medida que una aplicación crece, no es conveniente tener todo en un solo archivo.
+Separamos el código en "módulos" independientes según su responsabilidad:
+  a) Archivo de Lógica / Reglas de Negocio (ej: logicaBar.js):
+     - Contiene las listas de precios, validaciones y funciones principales.
+     - NO ejecuta console.log principales ni corre el flujo.
+     - Expone sus herramientas hacia afuera usando 'module.exports':
+       const PRECIOS = { fernet: 2000, birra: 1200 };
+       function atenderClientes(cliente, trago) { ... }
+       function calcularRecaudacion(tickets) { ... }
+       module.exports = {
+           PRECIOS,
+           atenderClientes,
+           calcularRecaudacion
+       };
+  b) Archivo Principal / Ejecutable (ej: app5.js):
+     - Importa solo lo que necesita usando 'require' con ruta relativa './':
+     
+       const { PRECIOS, atenderClientes, calcularRecaudacion } = require('./logicaBar');
+     - Procesa los clientes y coordina el guardado de archivos.
+  c) Ventajas de la Modularización:
+     * Código mucho más limpio, legible y profesional.
+     * Reutilización: varios archivos pueden importar la misma 'logicaBar'.
+     * Facilidad para encontrar y solucionar errores (mantenibilidad).
+16. ASINCRONISMO EN NODE.JS (async / await y fs/promises - Visto en app6.js)
+--------------------------------------------------------------------------------
+En servidores reales, no bloqueamos el programa con métodos 'Sync'. Usamos promesas:
+  * 'fs/promises': Versión asincrónica de las operaciones de archivos.
+  * 'async function': Declara que una función contiene operaciones que toman tiempo.
+  * 'await': Espera a que termine una promesa (solo funciona dentro de funciones async).
+  * 'try...catch': Atrapa cualquier error (como permisos o disco lleno) sin que la app muera.
+
+  Ejemplo:
+    const fs = require('fs/promises');
+
+    async function guardarReporte(datos) {
+        try {
+            await fs.writeFile('cierre_async.json', JSON.stringify(datos, null, 2));
+            const leido = await fs.readFile('cierre_async.json', 'utf-8');
+            console.log("Guardado y leído con éxito");
+        } catch (error) {
+            console.error("Error atrapado:", error.message);
+        }
+    }
+
+
+17. ENTRADA INTERACTIVA POR CONSOLA (readline/promises - Visto en app7.js)
+--------------------------------------------------------------------------------
+Permite hacer preguntas al usuario por teclado en tiempo real y esperar sus respuestas:
+  * 'readline/promises': Módulo nativo para crear interfaces de preguntas asincrónicas.
+  * 'process.stdin' y 'process.stdout': Canales de entrada (teclado) y salida (pantalla).
+  * 'await rl.question(...)': Pausa la ejecución hasta que el usuario presiona Enter.
+  * 'rl.close()': Cierra la interfaz (se coloca dentro de 'finally' para asegurar su cierre).
+
+  Ejemplo:
+    const readline = require('readline/promises');
+    const { stdin: input, stdout: output } = require('process');
+    const rl = readline.createInterface({ input, output });
+
+    async function preguntar() {
+        try {
+            const nombre = await rl.question("¿Tu nombre?: ");
+            const edad = Number(await rl.question("¿Tu edad?: "));
+            console.log(`Hola ${nombre}, edad: ${edad}`);
+        } finally {
+            rl.close(); // Siempre cerrar la consola
+        }
+    }
+
+
+18. SERVIDORES WEB Y APIS (Módulo 'http' Nativo - Visto en app8.js)
+--------------------------------------------------------------------------------
+Convierte nuestro programa en un servicio web accesible desde cualquier navegador:
+  * 'http.createServer((req, res) => { ... })': Crea el servidor.
+  * 'req' (Request): Datos de la petición que hace el cliente (ej: req.url).
+  * 'res' (Response): Objeto para enviar la respuesta de vuelta al cliente.
+  * 'res.setHeader(...)': Indica el tipo de contenido (ej: 'application/json').
+  * 'res.writeHead(status)': Código de estado HTTP (200 = OK, 404 = Not Found).
+  * 'res.end(datos)': Envía el cuerpo de la respuesta y finaliza la conexión.
+  * 'servidor.listen(puerto)': Pone el servidor a escuchar en un puerto (ej: 3000).
+
+  Ejemplo:
+    const http = require('http');
+    const PUERTO = 3000;
+
+    const servidor = http.createServer((req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        
+        if (req.url === '/precios') {
+            res.writeHead(200);
+            return res.end(JSON.stringify({ fernet: 2000, birra: 1200 }));
+        }
+
+        res.writeHead(404);
+        res.end(JSON.stringify({ error: "No encontrado" }));
+    });
+
+    servidor.listen(PUERTO, () => console.log(`Corriendo en http://localhost:${PUERTO}`));
+
+
+19. QUERY PARAMETERS Y PARÁMETROS DINÁMICOS POR URL (Visto en app9.js)
+--------------------------------------------------------------------------------
+Permite enviar datos desde el cliente hacia el servidor directamente en la URL:
+  * Estructura: http://localhost:3000/ruta?clave1=valor1&clave2=valor2
+    - '?' : Marca el comienzo de los parámetros de búsqueda (Query String).
+    - '&' : Separa múltiples parámetros clave=valor.
+
+  * Procesamiento en JavaScript Moderno (Clase nativa 'URL'):
+      const urlCompleta = new URL(req.url, `http://${req.headers.host}`);
+      const ruta = urlCompleta.pathname;          // ej: '/atender'
+      const params = urlCompleta.searchParams;     // Colección de parámetros
+
+  * Métodos útiles:
+      - params.get('nombre')  -> Obtiene el valor del parámetro (ej: "Tomas")
+      - params.has('nombre')  -> Devuelve true/false si el parámetro existe
+
+  * Conversión de Tipos y Códigos HTTP:
+      - Todo lo que llega por URL es 'string' (texto). Para números: Number(params.get('edad')).
+      - Código 400 (Bad Request): Se devuelve cuando faltan parámetros o los tipos son incorrectos.
+      - Código 200 (OK): La petición se procesó exitosamente.
+      - Código 404 (Not Found): La ruta solicitada no existe.
+
+  Ejemplo:
+    if (ruta === '/atender') {
+        const nombre = params.get('nombre');
+        const edad = Number(params.get('edad'));
+        const trago = params.get('trago');
+        
+        if (!nombre || isNaN(edad)) {
+            res.writeHead(400);
+            return res.end(JSON.stringify({ error: "Faltan parámetros o son inválidos" }));
+        }
+        
+        res.writeHead(200);
+        res.end(JSON.stringify({ mensaje: `Hola ${nombre}, procesando ${trago}` }));
+    }
+
+20. SERVIDORES REST PROFESIONALES CON EXPRESS.JS (Visto en app14.js)
+--------------------------------------------------------------------------------
+Express.js es el framework estándar de la industria para construir APIs y servidores web en Node.js.
+Simplifica drásticamente el código en comparación con el módulo 'http' nativo:
+
+  * Inicialización:
+      const express = require('express');
+      const app = express();
+
+  * Middlewares Globales:
+      app.use(express.json()); // Parsea automáticamente JSON en el Body de peticiones POST
+
+  * Enrutamiento Limpio y Métodos HTTP:
+      app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+      app.get('/api/stock', (req, res) => res.json(STOCK));
+      app.post('/api/atender', async (req, res) => {
+          const { nombre, edad, cash, trago } = req.body; // ¡Datos listos directamente!
+          res.status(200).json(ticket);
+      });
+
+  * Métodos clave de Respuesta en Express:
+      - res.sendFile(rutaAbsoluta) -> Envía archivos (HTML, imágenes, etc.) directamente.
+      - res.json(objeto)           -> Configura cabeceras JSON y convierte el objeto en 1 línea.
+      - res.status(codigo)         -> Establece el código de estado HTTP (ej: 200, 400, 500).
+
+  * Ventajas principales de Express frente a HTTP Nativo:
+      1. Sin parseo manual de streams ni chunks (req.on('data') desaparece).
+      2. Sin necesidad de res.setHeader ni JSON.stringify manuales.
+      3. Enrutamiento declarativo claro (app.get, app.post, app.put, app.delete).
+
+21. GUÍA MAESTRA: DETALLE DE FUNCIONES, USO Y FLUJO COMPLETO (Full-Stack)
+--------------------------------------------------------------------------------
+A) DETALLE DE CADA FUNCIÓN Y HERRAMIENTA:
+
+  1. app.use(express.json()) [Middleware Global]
+     - Para qué sirve: Convierte el texto JSON que envía el cliente por POST/PUT en un objeto JavaScript listo en 'req.body'.
+     - Cuándo se usa: Al inicio del servidor Express, antes de cualquier ruta POST o PUT.
+     - Cómo se usa: app.use(express.json());
+
+  2. atenderClientes(cliente, trago) [Lógica de Negocio / logicaBar.js]
+     - Para qué sirve: Valida carta de precios, edad mínima, stock disponible y dinero. Descuenta el inventario y calcula vuelto.
+     - Cuándo se usa: En la ruta POST /api/atender al procesar una compra.
+     - Cómo se usa: const ticket = atenderClientes({ nombre, edad, cash }, trago);
+
+  3. leerVentas() [Persistencia / Base de Datos JSON]
+     - Para qué sirve: Lee 'ventas.json' de forma asincrónica con fs.readFile y lo convierte a arreglo con JSON.parse. Si falla o no existe, devuelve [].
+     - Cuándo se usa: Al consultar el historial (GET /api/ventas) o antes de guardar una nueva venta.
+     - Cómo se usa: const ventas = await leerVentas();
+
+  4. guardarVentas(ticket) [Persistencia en Disco]
+     - Para qué sirve: Agrega fecha/hora al ticket, lo suma al arreglo existente y lo guarda en 'ventas.json' con fs.writeFile.
+     - Cuándo se usa: Inmediatamente después de que ticket.exito sea true.
+     - Cómo se usa: if (ticket.exito) { await guardarVentas(ticket); }
+
+  5. app.get('/', ...) y res.sendFile(...) [Entrega de Vistas]
+     - Para qué sirve: Envía el archivo visual 'index.html' al navegador cuando el usuario entra a la raíz.
+     - Cuándo se usa: En peticiones GET a '/'.
+     - Cómo se usa: app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+
+  6. app.get('/api/stock', ...) y res.json(...) [API de Consulta]
+     - Para qué sirve: Devuelve el inventario en formato JSON para que el navegador actualice la interfaz.
+     - Cuándo se usa: Al cargar la página y tras cada venta para refrescar el stock sin recargar.
+     - Cómo se usa: app.get('/api/stock', (req, res) => res.json(STOCK));
+
+  7. app.post('/api/atender', ...) y req.body [API Transaccional]
+     - Para qué sirve: Recibe los datos del cliente, ejecuta la lógica, persiste en JSON y responde con el ticket.
+     - Cuándo se usa: Cuando el usuario hace clic en '¡Pedir Trago!' en la página web.
+     - Cómo se usa:
+         app.post('/api/atender', async (req, res) => {
+             const { nombre, edad, cash, trago } = req.body;
+             const ticket = atenderClientes({ nombre, edad: Number(edad), cash: Number(cash) }, trago);
+             if (ticket.exito) await guardarVentas(ticket);
+             res.json(ticket);
+         });
+
+  8. app.get('/api/ventas/:nombreCliente', ...) y req.params [Parámetros de Ruta]
+     - Para qué sirve: Captura variables directamente desde la URL para buscar compras de un cliente específico.
+     - Cuándo se usa: En auditorías o filtros personalizados (ej: /api/ventas/neuen).
+     - Cómo se usa: const { nombreCliente } = req.params;
+
+--------------------------------------------------------------------------------
+B) EL VIAJE COMPLETO DE UN PEDIDO (Flujo en tiempo real):
+
+  1. [Navegador]  --> fetch('/api/atender', { method: 'POST', body: JSON })
+  2. [Express]    --> express.json() transforma los datos recibidos a 'req.body'
+  3. [Ruta POST]  --> Extrae variables y llama a atenderClientes(...)
+  4. [Lógica Bar] --> Valida reglas, descuenta 1 unidad de STOCK y genera ticket
+  5. [Base Datos] --> guardarVentas(ticket) lee ventas.json, agrega y guarda en disco
+  6. [Respuesta]  --> res.json(ticket) devuelve el resultado al navegador
+  7. [Navegador]  --> Muestra el mensaje (verde/rojo) y llama a GET /api/stock para actualizar el DOM
+
+22. CRUD COMPLETO EN EXPRESS: GET, POST, PUT Y DELETE (Visto en app15.js)
+--------------------------------------------------------------------------------
+CRUD representa las 4 operaciones fundamentales sobre cualquier entidad de datos:
+  * C - Create (Crear)      -> Método HTTP POST
+  * R - Read (Leer/Buscar)   -> Método HTTP GET
+  * U - Update (Actualizar) -> Método HTTP PUT / PATCH
+  * D - Delete (Eliminar)   -> Método HTTP DELETE
+
+1. Parámetros de Ruta Dinámicos (Route Params):
+   - Sintaxis: app.get('/api/ventas/:nombreCliente', async (req, res) => { ... })
+   - Acceso: const { nombreCliente } = req.params;
+   - Uso: Permite filtrar datos desde la URL (ej: /api/ventas/neuen).
+
+2. Actualización de Datos con PUT:
+   - Sintaxis:
+       app.put('/api/stock/reponer', (req, res) => {
+           const { trago, cantidad } = req.body;
+           STOCK[trago] += Number(cantidad);
+           res.json({ exito: true, stockActual: STOCK });
+       });
+   - Uso: Modificar o reabastecer recursos existentes en el servidor.
+
+3. Eliminación de Datos con DELETE:
+   - Sintaxis:
+       app.delete('/api/ventas', async (req, res) => {
+           await guardarTodasLasVentas([]); // Vacía el archivo JSON
+           res.json({ exito: true, mensaje: "Historial reseteado." });
+       });
+   - Uso: Borrar registros o reiniciar colecciones.
+
+4. ¿Cómo ejecutar peticiones PUT y DELETE?
+   - Desde la consola del navegador (F12) con fetch():
+       fetch('/api/stock/reponer', {
+           method: 'PUT',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ trago: 'whisky', cantidad: 5 })
+       });
+================================================================================
+        ¡SISTEMA MAESTRO COMPLETADO: ARQUITECTURA CRUD FULL-STACK!
+================================================================================
+
+23. MIDDLEWARES PERSONALIZADOS: LOGGER Y CONTROL DE ACCESO (Visto en app16.js)
+--------------------------------------------------------------------------------
+Los Middlewares son funciones intermedias que se ejecutan entre la llegada de la
+petición HTTP y el controlador final de la ruta (req, res).
+
+1. Estructura de un Middleware:
+   - Recibe tres parámetros: (req, res, next).
+   - req: Objeto de la petición entrante (headers, body, query, url, method).
+   - res: Objeto para enviar respuestas o cortar la petición si es necesario.
+   - next(): Función imprescindible que da paso al siguiente middleware o ruta.
+
+2. Middleware Global (Logger / Auditoría):
+   - Se aplica a TODAS las peticiones que llegan al servidor mediante app.use().
+   - Sintaxis:
+       app.use((req, res, next) => {
+           const hora = new Date().toLocaleTimeString();
+           console.log(`🔔 [${hora}] Petición entrante: ${req.method} --> ${req.url}`);
+           next(); // Permite que la petición continúe su viaje
+       });
+
+3. Middleware de Ruta (El "Patovica" / Autorización de Seguridad):
+   - Se coloca como argumento intermedio en rutas específicas que queremos proteger.
+   - Evalúa credenciales (en headers o query params).
+   - Si la clave es válida -> llama a next().
+   - Si la clave es inválida -> corta inmediatamente con res.status(401).json(...).
+   - Sintaxis:
+       function patovicaAdmin(req, res, next) {
+           const clave = req.headers['x-admin-key'] || req.query.key;
+           if (clave === 'admin123') {
+               return next();
+           }
+           return res.status(401).json({
+               exito: false,
+               error: "⛔ Acceso denegado: Se requiere clave de Administrador."
+           });
+       }
+
+4. Aplicación en Rutas Protegidas (PUT y DELETE):
+   - Reponer stock con clave:
+       app.put('/api/stock/reponer', patovicaAdmin, (req, res) => {
+           const { trago, cantidad } = req.body;
+           STOCK[trago] += Number(cantidad);
+           res.json({ exito: true, mensaje: `Stock actualizado`, stockActual: STOCK });
+       });
+   - Resetear historial con clave:
+       app.delete('/api/ventas', patovicaAdmin, async (req, res) => {
+           await guardarTodasLasventas([]);
+           res.json({ exito: true, mensaje: "Historial reseteado por Admin." });
+       });
+
+5. Cómo enviar credenciales desde el cliente (fetch):
+   - Por Query Params: fetch('/api/stock/reponer?key=admin123', { method: 'PUT', ... })
+   - Por Headers: fetch('/api/stock/reponer', { method: 'PUT', headers: { 'x-admin-key': 'admin123', 'Content-Type': 'application/json' }, ... })
+
+================================================================================
+         ¡CAPÍTULO 16 COMPLETADO: MIDDLEWARES, LOGGER Y SEGURIDAD ADMIN!
+================================================================================
+
+24. ARQUITECTURA MODULAR PROFESIONAL CON EXPRESS.ROUTER() (Visto en app17.js)
+--------------------------------------------------------------------------------
+En aplicaciones reales, agrupar decenas de rutas en un solo archivo genera código
+inmantenible ("código espagueti"). La solución estándar es express.Router().
+
+1. Concepto de express.Router():
+   - Funciona como un "mini-servidor" o módulo de rutas independiente.
+   - Se crea con: const router = express.Router(); (con 'R' mayúscula).
+   - En lugar de app.get(), se define router.get(), router.post(), etc.
+   - Se exporta al final con: module.exports = router;
+
+2. Separación por Responsabilidades (Dominio):
+   - rutasBar.js: Rutas públicas de clientes (ver stock, ver ventas, pedir trago).
+   - rutasAdmin.js: Rutas administrativas protegidas (reponer stock, vaciar ventas).
+   - app17.js: Servidor central orquestador (ultraliviano, menos de 50 líneas).
+
+3. Magia de los Prefijos de URL:
+   - En el servidor principal se montan los routers indicando una ruta base:
+       app.use('/api', rutasBar);        // Prefijo '/api'
+       app.use('/api/admin', rutasAdmin); // Prefijo '/api/admin'
+   - Dentro de rutasBar.js, router.get('/stock') se convierte automáticamente en /api/stock.
+   - Dentro de rutasAdmin.js, router.put('/stock/reponer') se convierte en /api/admin/stock/reponer.
+
+4. Middlewares a Nivel de Router:
+   - Para proteger TODAS las rutas de un enrutador sin repetirlo una por una:
+       router.use(patovicaAdmin);
+   - De esta forma, cualquier endpoint definido dentro de ese router queda blindado.
+
+================================================================================
+      ¡CAPÍTULO 17 COMPLETADO: ARQUITECTURA MODULAR CON EXPRESS.ROUTER!
+================================================================================
+
+25. VARIABLES DE ENTORNO (.ENV) Y MANEJO CENTRAL DE ERRORES (Visto en app18.js)
+--------------------------------------------------------------------------------
+1. Variables de Entorno con 'dotenv':
+   - Regla de Oro: NUNCA escribir contraseñas, claves secretas o puertos directamente en el código (hardcoding).
+   - Se almacenan en un archivo '.env' en la raíz con sintaxis CLAVE=VALOR (sin espacios ni comillas).
+   - Instalación: npm install dotenv
+   - Carga al inicio del proyecto: require('dotenv').config();
+   - Acceso en Node: process.env.NOMBRE_VARIABLE (ej: process.env.PUERTO, process.env.ADMIN_KEY).
+   - Patrón Fallback: const PUERTO = process.env.PUERTO || 3000;
+
+2. Manejo de Rutas No Encontradas (Error 404):
+   - Se coloca después de todas las rutas y routers válidos.
+   - Si una petición no coincidió con ninguna ruta anterior, cae en este middleware:
+       app.use((req, res) => {
+           res.status(404).json({ exito: false, error: `Ruta no encontrada` });
+       });
+
+3. Middleware Centralizado de Errores (Firma de 4 Parámetros):
+   - REGLA DE ORO DE EXPRESS: Cuando un middleware recibe 4 parámetros (err, req, res, next),
+     Express lo reconoce automáticamente como el Manejador Global de Errores.
+   - Cómo saltar al manejador de errores desde cualquier ruta: next(error);
+   - Estructura:
+       app.use((err, req, res, next) => {
+           console.error(`🚨 ERROR ATRAPADO: ${err.message}`);
+           const status = err.status || 500;
+           res.status(status).json({
+               exito: false,
+               error: err.message || "Error interno del servidor",
+               momento: new Date().toLocaleString()
+           });
+       });
+
+================================================================================
+  ¡CAPÍTULO 18 COMPLETADO: VARIABLES DE ENTORNO (.ENV) Y MANEJO DE ERRORES!
+================================================================================
+
+26. VALIDACIÓN PROFESIONAL DE DATOS EN BACKEND CON ZOD (Visto en app19.js)
+--------------------------------------------------------------------------------
+Validar datos manualmente con 'if/else' es frágil, propenso a errores e inmantenible.
+La solución estándar en la industria es usar bibliotecas de esquemas como Zod.
+
+1. Concepto de Esquema (Schema) con Zod:
+   - Instalación: npm install zod
+   - Definición del molde:
+       const { z } = require('zod');
+       const pedidoSchema = z.object({
+           nombre: z.string().min(2).max(50),
+           edad: z.number().int().min(1).max(120),
+           cash: z.number().positive(),
+           trago: z.enum(['fernet', 'birra', 'ginTonic', 'whisky', 'gaseosa', 'agua'])
+       });
+
+2. Middleware Genérico Reutilizable:
+   - Usa schema.safeParse(req.body) para evaluar sin romper la ejecución.
+   - Si falla, formatea y responde con 400 Bad Request y la lista de fallos:
+       function validar(schema) {
+           return (req, res, next) => {
+               const resultado = schema.safeParse(req.body);
+               if (!resultado.success) {
+                   const errores = resultado.error.issues.map(i => i.message);
+                   return res.status(400).json({ exito: false, errores });
+               }
+               req.body = resultado.data; // Datos saneados
+               next();
+           };
+       }
+
+3. Integración en Rutas:
+   - Se inyecta antes del controlador:
+       router.post('/atender', validar(pedidoSchema), async (req, res) => { ... });
+   - El controlador queda 100% libre de validaciones manuales.
+
+================================================================================
+  ¡FASE 2 DE BACKEND COMPLETADA: NODE.JS, EXPRESS, ARQUITECTURA, SEGURIDAD Y ZOD!
+================================================================================
+
+27. INTRODUCCIÓN A BASES DE DATOS RELACIONALES (SQL) (Visto en app20_sql.js)
+--------------------------------------------------------------------------------
+Las bases de datos reemplazan a los archivos JSON para garantizar integridad,
+concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos con índices).
+
+1. Motores SQL y SQLite Nativo en Node 24+:
+   - Node 22.5+ incluye 'node:sqlite' de forma nativa sin instalar librerías externas.
+   - Conexión:
+       const { DatabaseSync } = require('node:sqlite');
+       const db = new DatabaseSync('bar.db');
+
+2. Lenguaje de Definición de Datos (DDL - CREATE TABLE):
+   - Tipos principales: INTEGER, TEXT, DATETIME.
+   - Primary Key (PK): Clave primaria única e irrepetible (AUTOINCREMENT).
+   - Foreign Key (FK): Clave foránea que referencia el id de otra tabla.
+   - Sintaxis:
+       db.exec(`
+           CREATE TABLE IF NOT EXISTS tragos (
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               nombre TEXT UNIQUE NOT NULL,
+               precio INTEGER NOT NULL,
+               stock INTEGER NOT NULL
+           );
+       `);
+
+3. Consultas Preparadas (Prepared Statements):
+   - Evitan inyecciones de código malicioso (SQL Injection).
+   - Inserción con parámetros (?):
+       const insertar = db.prepare('INSERT INTO tragos (nombre, precio, stock) VALUES (?, ?, ?)');
+       insertar.run('fernet', 2000, 10);
+   - Lectura de un solo registro: db.prepare('SELECT ...').get();
+   - Lectura de múltiples registros: db.prepare('SELECT ...').all();
+   - Filtros: WHERE precio < 2000.
+
+================================================================================
+  ¡INICIO DE FASE 3: PRIMERA BASE DE DATOS RELACIONAL CREADA Y CONSULTADA CON SQL!
+================================================================================
+
+28. OPERACIONES RELACIONALES, UPDATE Y CONSULTAS CON JOIN (Visto en app21_sql_ventas.js)
+--------------------------------------------------------------------------------
+1. Inserción Relacionada (INSERT INTO con Claves Foráneas):
+   - En lugar de duplicar los datos del trago (nombre, precio) en cada venta,
+     se almacena únicamente la clave foránea: trago_id.
+   - Sintaxis:
+       const insertarVenta = db.prepare(`
+           INSERT INTO ventas (cliente, trago_id, precio_cobrado, vuelto)
+           VALUES (?, ?, ?, ?)
+       `);
+       insertarVenta.run(nombreCliente, trago.id, trago.precio, vuelto);
+
+2. Actualización de Registros en la Base de Datos (UPDATE):
+   - Modifica valores existentes en la tabla con condiciones WHERE precisas.
+   - Restar inventario tras una venta:
+       const actualizarStock = db.prepare(`
+           UPDATE tragos 
+           SET stock = stock - 1 
+           WHERE id = ?
+       `);
+       actualizarStock.run(trago.id);
+
+3. La Consulta Reina de SQL: El JOIN (Unión de Tablas):
+   - Une registros de dos o más tablas en una sola respuesta combinada basándose
+     en una columna común (Primary Key <-> Foreign Key).
+   - Sintaxis:
+       SELECT 
+           ventas.id AS venta_id,
+           ventas.cliente,
+           tragos.nombre AS trago_comprado,
+           ventas.precio_cobrado,
+           ventas.vuelto,
+           ventas.fecha
+       FROM ventas
+       JOIN tragos ON ventas.trago_id = tragos.id
+       ORDER BY ventas.id DESC;
+
+4. Funciones de Agregación (Cálculos de Alta Velocidad en BD):
+   - COUNT(*): Cuenta la cantidad total de filas que cumplen un criterio.
+   - SUM(columna): Suma todos los valores numéricos de una columna (ej: total recaudado).
+   - Sintaxis:
+       SELECT COUNT(*) AS total_ventas, SUM(precio_cobrado) AS dinero_en_caja FROM ventas;
+
+================================================================================
+  ¡DOMINIO DE SQL RELACIONAL COMPLETADO: INSERTS, UPDATES, JOINS Y AGREGACIONES!
+================================================================================
+
+29. CONFIGURACIÓN DE FLUJO DE TRABAJO, RESPALDO LOCAL Y REGLAS (AGENTS.md)
+--------------------------------------------------------------------------------
+1. Persistencia Local Independiente del Editor:
+   - Para evitar pérdidas de historial ante reinstalaciones del IDE, toda la
+     documentación del proyecto vive en archivos físicos dentro del workspace:
+       * ROADMAP.md (Seguimiento de temas y fechas).
+       * Node/resumen_aprendizaje.txt (Guía teórica y práctica acumulada).
+       * Node/historico_conversaciones.txt (Bitácora completa de cada sesión).
+
+2. Comando de Cierre Estricto ("finalizar tarea"):
+   - Configurado en AGENTS.md bajo la identidad del mentor "Mr Charly".
+   - Se dispara ÚNICAMENTE cuando el mensaje es exactamente "finalizar tarea"
+     (sin palabras adicionales antes ni después), actualizando automáticamente
+     los 3 archivos de seguimiento.
+
+
+30. ORM MODERNO CON PRISMA (Visto en schema.prisma y app22_prisma.js)
+--------------------------------------------------------------------------------
+1. ¿Qué es Prisma ORM?:
+   - Es un puente (Object-Relational Mapping) que lee el archivo `schema.prisma`
+     y traduce las tablas SQL en modelos y métodos de JavaScript fuertemente
+     tipados (si escribís mal una columna como `prrecio`, Prisma te avisa antes
+     de tocar la base de datos).
+   - Para proyectos en JavaScript CommonJS (`require`), el generador en
+     `schema.prisma` se configura como:
+       generator client {
+         provider = "prisma-client-js"
+       }
+     y se compila ejecutando: `npx prisma generate`.
+
+2. Conexión y Desconexión Limpia (`PrismaClient`):
+   - Todas las consultas de Prisma son asíncronas y devuelven Promesas (`async/await`).
+   - Sintaxis base:
+       const { PrismaClient } = require('@prisma/client');
+       const prisma = new PrismaClient();
+       // Al finalizar el script:
+       await prisma.$disconnect();
+
+3. Método `.upsert()` (Update + Insert sin duplicar):
+   - Busca un registro por un campo `@unique` (ej: `nombre`). Si no existe, lo
+     crea (`create`); si ya existe, aplica `update` (o lo deja intacto con `{}`):
+       await prisma.trago.upsert({
+           where: { nombre: 'fernet' },
+           update: {},
+           create: { nombre: 'fernet', precio: 2000, stock: 10 }
+       });
+
+4. Método `.findMany()` (Equivalente a `SELECT * FROM tragos`):
+   - Obtiene todos los registros de la tabla como un arreglo de objetos JS:
+       const carta = await prisma.trago.findMany();
+       console.table(carta);
+
+5. Métodos de Venta Presentados (para relaciones 1 a muchos):
+   - `.findUnique({ where: { nombre } })`: Busca un único registro.
+   - `prisma.venta.create({ data: { ... } })`: Inserta una nueva fila.
+   - `prisma.trago.update({ where: { id }, data: { stock: { decrement: 1 } } })`:
+     Resta stock de forma atómica sin necesidad de escribir SQL manual.
+
+
+31. VENTAS RELACIONADAS, DECREMENTO Y JOIN AUTOMÁTICO EN PRISMA (app22_prisma.js)
+--------------------------------------------------------------------------------
+1. Función `realizarVenta` Completa con Prisma ORM:
+   - Combina búsqueda única (`findUnique`), inserción con clave foránea (`tragoId`)
+     y actualización atómica de inventario (`{ decrement: 1 }`):
+       async function realizarVenta(nombreCliente, nombreTrago, dineroCliente) {
+           const trago = await prisma.trago.findUnique({
+               where: { nombre: nombreTrago }
+           });
+           if (!trago || trago.stock <= 0 || dineroCliente < trago.precio) return;
+
+           const vuelto = dineroCliente - trago.precio;
+           await prisma.venta.create({
+               data: {
+                   cliente: nombreCliente,
+                   tragoId: trago.id,
+                   precioCobrado: trago.precio,
+                   vuelto: vuelto
+               }
+           });
+
+           await prisma.trago.update({
+               where: { id: trago.id },
+               data: { stock: { decrement: 1 } }
+           });
+       }
+
+2. El JOIN Automático de Prisma (`include`):
+   - Gracias a la relación definida en `schema.prisma`, no hace falta escribir
+     `JOIN tragos ON ...`. Basta con pasar `include: { trago: true }`:
+       const ventasConTrago = await prisma.venta.findMany({
+           include: { trago: true },
+           orderBy: { id: 'desc' }
+       });
+
+3. Cierre de Caja con `.aggregate()` (Equivalente a `COUNT(*)` y `SUM()`):
+   - Calcula totales directamente en el motor de base de datos:
+       const caja = await prisma.venta.aggregate({
+           _count: true,
+           _sum: { precioCobrado: true }
+       });
+       // caja._count -> total de ventas
+       // caja._sum.precioCobrado -> recaudación total
+
+================================================================================
+  ¡FASE 3 COMPLETADA AL 100%: SQL PURO, PRISMA ORM, RELACIONES Y AGREGACIONES!
+================================================================================
+
+32. SEGURIDAD Y HASHING DE CONTRASEÑAS CON BCRYPT (Visto en app23_bcrypt.js)
+--------------------------------------------------------------------------------
+1. Regla de Oro del Backend:
+   - NUNCA guardar contraseñas en texto plano en la base de datos.
+   - Se utiliza `bcrypt` (`npm install bcrypt`) para transformar la contraseña en
+     un hash irreversible de una sola vía.
+
+2. Salt (Sal Criptográfica) y Cost Factor (`saltRounds`):
+   - `const saltRounds = 10;` indica la complejidad matemática del hashing.
+   - `bcrypt` inyecta una "sal" aleatoria en cada contraseña: si dos usuarios
+     eligen la misma clave (ej: `"123456"`), sus hashes guardados en la base de
+     datos serán completamente distintos.
+
+3. Encriptar al Registrar (`bcrypt.hash`):
+   - Sintaxis implementada en `app23_bcrypt.js`:
+       const bcrypt = require('bcrypt');
+       async function registrarUsuario(nombre, passwordPlana, rol) {
+           const saltRounds = 10;
+           const passwordHash = await bcrypt.hash(passwordPlana, saltRounds);
+           usuariosDB.push({
+               id: usuariosDB.length + 1,
+               nombre,
+               rol,
+               passwordHash
+           });
+       }
+
+4. Validar Contraseña en el Login (`bcrypt.compare`):
+   - Como el hash es irreversible, para saber si el usuario escribió la clave
+     correcta se utiliza `await bcrypt.compare(passwordIngresada, usuario.passwordHash)`.
+   - Devuelve `true` si coincide o `false` si es incorrecta:
+       async function iniciarSesion(nombre, passwordIngresada) {
+           const usuario = usuariosDB.find(u => u.nombre === nombre);
+           if (!usuario) return;
+
+           const coincide = await bcrypt.compare(passwordIngresada, usuario.passwordHash);
+           if (coincide) {
+               console.log(`✅ Acceso concedido a ${usuario.nombre} [${usuario.rol}]`);
+           } else {
+               console.log(`🚨 Contraseña incorrecta`);
+           }
+       }
+
+
+33. AUTENTICACIÓN CON JWT - JSON WEB TOKENS (Preparado para app24_jwt.js)
+--------------------------------------------------------------------------------
+1. ¿Qué es un JWT (`jsonwebtoken`)?:
+   - Es una credencial digital firmada ("Pulsera VIP") que el servidor le entrega
+     al usuario tras un `/login` exitoso para que no tenga que enviar su clave
+     en cada petición.
+   - Instalación: `npm install jsonwebtoken`.
+   - Variable de entorno en `.env`: `JWT_SECRET=selloSecretoDelBarPerrisimo2026`.
+
+2. Emisión de un Token en `/login` (`jwt.sign`):
+   - Recibe 3 argumentos: el `payload` (datos públicos como `id`, `nombre`, `rol`,
+     NUNCA la contraseña), el `JWT_SECRET` y opciones como `{ expiresIn: '1h' }`:
+       const payload = { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol };
+       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
