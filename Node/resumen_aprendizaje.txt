@@ -987,3 +987,32 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
    - Instrucciones de instalación paso a paso (`git clone`, `npm install`, `.env`,
      `npx prisma generate` y `node`).
 
+
+36. DESPLIEGUE A LA NUBE / DEPLOY EN RENDER.COM (Cierre de Fase 5)
+--------------------------------------------------------------------------------
+1. Los 3 Requisitos de Oro para Subir un Servidor Node.js a la Nube:
+   a) Script `"start"` en `package.json`:
+      Las plataformas cloud ejecutan `npm start` para encender la aplicación:
+        "scripts": {
+          "start": "node app24_jwt.js"
+        }
+   b) Puerto Dinámico (`process.env.PORT`):
+      Los servidores en la nube asignan el puerto mediante la variable `PORT`:
+        const PUERTO = process.env.PORT || process.env.PUERTO || 3001;
+   c) Ruta Raíz (`GET /` - Health Check):
+      Permite verificar desde cualquier navegador o celular que la API está viva:
+        app.get('/', (req, res) => {
+            res.json({ estado: "🟢 Online en la Nube" });
+        });
+
+2. Configuración en Render.com (Web Service conectado a GitHub):
+   - **Root Directory**: `Node` (indica la subcarpeta donde vive el `package.json` real).
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - Cada `git push` a la rama `main` en GitHub actualiza automáticamente el
+     servidor en vivo (Despliegue Continuo / CI-CD).
+
+================================================================================
+  ¡FASE 5 COMPLETADA AL 100%: GIT, GITHUB, DOCUMENTACIÓN README Y DEPLOY CLOUD!
+================================================================================
+

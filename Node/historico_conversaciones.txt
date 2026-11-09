@@ -213,3 +213,35 @@
    - Último punto de Fase 5: Despliegue a la Nube (Deploy en Render / Railway).
 
 ================================================================================
+
+[09/11/2026 (Parte 3) - Cierre de Fase 5: Despliegue en Vivo en Render.com]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Continuó con el último punto de la Fase 5 (Despliegue a la Nube).
+   - Mr Charly: Explicó los 3 requisitos esenciales para que un servidor Node.js
+     funcione en la nube:
+       1. Agregar el script `"start": "node app24_jwt.js"` en `Node/package.json`.
+       2. Escuchar el puerto dinámico `process.env.PORT || process.env.PUERTO || 3001`.
+       3. Crear una ruta pública de bienvenida (`GET /`) y agregar un valor de
+          respaldo en `JWT_SECRET`.
+   - Despliegue en Render.com:
+     * El usuario subió los cambios a GitHub (`commit acc5686`) y vinculó su cuenta
+       `tomasng` con Render.com.
+     * En el primer intento falló porque el Root Directory apuntaba a la raíz
+       (donde había un `package.json` vacío).
+     * Tras configurar `Root Directory: Node` en los Settings de Render, el
+       despliegue finalizó con éxito (`STATUS: Deploy succeeded | Live`) y el
+       usuario verificó su URL pública en internet desde el navegador.
+
+2. Archivos Actualizados en la Sesión:
+   - Node/package.json: Agregado script `"start": "node app24_jwt.js"`.
+   - Node/app24_jwt.js: Puerto dinámico `process.env.PORT`, ruta `GET /` y fallback
+     de `JWT_SECRET`.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Iniciar FASE 6 (Proyectos Finales y Salida Laboral): Proyecto 1 (Sistema de
+     Gestión de Comercio / API de Bar Completa unificando CRUD + Base de Datos +
+     Autenticación + Frontend básico).
+
+================================================================================

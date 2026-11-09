@@ -45,11 +45,11 @@ Este documento registra tu progreso real paso a paso. Se actualizará **automát
 ## 📌 FASE 5: Control de Versiones con Git y Portafolio
 - [x] **Git y GitHub**: Control de versiones, ramas, commits descriptivos y subida de repositorio a la nube (`tomasng/sistema-bar-backend-nodejs`) — *(Completado: 09/11/2026)*
 - [x] **Documentación de APIs**: Escribir `README.md` profesionales con ejemplos de endpoints para reclutadores — *(Completado: 09/11/2026)*
-- [ ] **Despliegue a la Nube (Deploy)**: Subir servidores Node.js a plataformas gratuitas (Render / Railway / Vercel) accesibles desde cualquier navegador — *(Próximo paso)*
+- [x] **Despliegue a la Nube (Deploy)**: Subir servidores Node.js a plataformas gratuitas (**Render.com** conectado a GitHub con despliegue continuo) accesibles desde cualquier navegador — *(Completado: 09/11/2026)*
 
 ---
 
 ## 📌 FASE 6: Proyectos Finales y Salida Laboral
-- [ ] **Proyecto 1: Sistema de Gestión de Comercio / API de Bar Completa** (CRUD + Base de Datos + Autenticación + Frontend básico).
+- [ ] **Proyecto 1: Sistema de Gestión de Comercio / API de Bar Completa** (CRUD + Base de Datos + Autenticación + Frontend básico) — *(Próximo paso)*
 - [ ] **Proyecto 2: API de E-commerce o Reservas** (Manejo de estados, pagos o turnos).
 - [ ] **Armado de CV, LinkedIn y Postulaciones**: Estrategia de búsqueda para puestos Trainee / Jr y captación de clientes freelance.
