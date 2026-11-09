@@ -190,3 +190,26 @@
      ejemplos de endpoints para reclutadores) y Despliegue a la Nube (Deploy).
 
 ================================================================================
+
+[09/11/2026 (Parte 2) - Documentación Profesional de API con README.md]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Continuó con la Fase 5 (Documentación de APIs) y creó el archivo
+     `README.md` en la raíz del proyecto, autorizando a Mr Charly a redactar y
+     guardar allí la documentación completa del repositorio.
+   - Mr Charly: Escribió `README.md` incluyendo:
+     * Descripción general del proyecto Backend.
+     * Stack Tecnológico (Node.js, Express, SQLite, Prisma ORM, Zod, Bcrypt, JWT).
+     * Tablas detalladas de Endpoints de Autenticación (`app24_jwt.js`) y Gestión
+       de Carta y Ventas (`rutasBar.js` / `rutasAdmin.js`).
+     * Guía paso a paso de clonación (`git clone`), instalación (`npm install`),
+       configuración de `.env` y ejecución local.
+
+2. Archivos Creados / Actualizados en la Sesión:
+   - README.md: Portada profesional del repositorio en GitHub.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Último punto de Fase 5: Despliegue a la Nube (Deploy en Render / Railway).
+
+================================================================================

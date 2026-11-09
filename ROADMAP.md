@@ -44,8 +44,8 @@ Este documento registra tu progreso real paso a paso. Se actualizará **automát
 
 ## 📌 FASE 5: Control de Versiones con Git y Portafolio
 - [x] **Git y GitHub**: Control de versiones, ramas, commits descriptivos y subida de repositorio a la nube (`tomasng/sistema-bar-backend-nodejs`) — *(Completado: 09/11/2026)*
-- [ ] **Documentación de APIs**: Escribir `README.md` profesionales con ejemplos de endpoints para reclutadores — *(Próximo paso)*
-- [ ] **Despliegue a la Nube (Deploy)**: Subir servidores Node.js a plataformas gratuitas (Render / Railway / Vercel) accesibles desde cualquier navegador.
+- [x] **Documentación de APIs**: Escribir `README.md` profesionales con ejemplos de endpoints para reclutadores — *(Completado: 09/11/2026)*
+- [ ] **Despliegue a la Nube (Deploy)**: Subir servidores Node.js a plataformas gratuitas (Render / Railway / Vercel) accesibles desde cualquier navegador — *(Próximo paso)*
 
 ---
 

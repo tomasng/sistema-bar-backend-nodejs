@@ -971,3 +971,19 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
    - `git commit -m "Descripción"`  -> Guarda una foto en el historial local.
    - `git push`                     -> Sube los commits a la nube (GitHub).
 
+
+35. DOCUMENTACIÓN PROFESIONAL DE APIS CON README.md (Fase 5)
+--------------------------------------------------------------------------------
+1. Función del archivo `README.md`:
+   - GitHub renderiza automáticamente el archivo `README.md` de la raíz como la
+     portada pública del repositorio para reclutadores y desarrolladores.
+   - Atajo para ver la vista previa en el editor: `Ctrl + Shift + V`.
+
+2. Estructura Estándar de un `README.md` de Backend:
+   - Título y resumen de la arquitectura del proyecto.
+   - Stack Tecnológico (Node.js, Express, SQLite, Prisma ORM, Zod, Bcrypt, JWT).
+   - Tablas Markdown (`| Método | Endpoint | Acceso | Descripción |`) documentando
+     cada ruta de la API.
+   - Instrucciones de instalación paso a paso (`git clone`, `npm install`, `.env`,
+     `npx prisma generate` y `node`).
+
