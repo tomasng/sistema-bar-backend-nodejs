@@ -37,14 +37,14 @@ Este documento registra tu progreso real paso a paso. Se actualizará **automát
 
 ## 📌 FASE 4: Autenticación, Seguridad y Autorización
 - [x] **Hashing de Contraseñas**: Seguridad con `bcrypt` (nunca guardar passwords en texto plano: `bcrypt.hash` y `bcrypt.compare` en `app23_bcrypt.js`) — *(Completado: 06/11/2026)*
-- [ ] **Autenticación con JWT (JSON Web Tokens)**: Registro (`/register`), Login (`/login`) y tokens de sesión — *(En progreso 06/11/2026: `jsonwebtoken` y `JWT_SECRET` listos; Próximo paso: escribir Parte 1 y Parte 2 en `app24_jwt.js`)*
-- [ ] **Control de Acceso por Roles (RBAC)**: Middleware para diferenciar permisos (Rol: Cliente vs. Rol: Administrador).
+- [x] **Autenticación con JWT (JSON Web Tokens)**: Registro (`/register`), Login (`/login`), emisión con `jwt.sign` y middleware `verificarToken` con `jwt.verify` (`app24_jwt.js`) — *(Completado: 09/11/2026)*
+- [x] **Control de Acceso por Roles (RBAC)**: Middleware `soloAdmin` para diferenciar permisos (Rol: Cliente vs. Rol: Administrador en `/caja-fuerte`) — *(Completado: 09/11/2026)*
 
 ---
 
 ## 📌 FASE 5: Control de Versiones con Git y Portafolio
-- [ ] **Git y GitHub**: Control de versiones, ramas, commits descriptivos y subida de repositorios públicos.
-- [ ] **Documentación de APIs**: Escribir `README.md` profesionales con ejemplos de endpoints para reclutadores.
+- [x] **Git y GitHub**: Control de versiones, ramas, commits descriptivos y subida de repositorio a la nube (`tomasng/sistema-bar-backend-nodejs`) — *(Completado: 09/11/2026)*
+- [ ] **Documentación de APIs**: Escribir `README.md` profesionales con ejemplos de endpoints para reclutadores — *(Próximo paso)*
 - [ ] **Despliegue a la Nube (Deploy)**: Subir servidores Node.js a plataformas gratuitas (Render / Railway / Vercel) accesibles desde cualquier navegador.
 
 ---

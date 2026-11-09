@@ -16,3 +16,4 @@
   1. Guardar el registro completo de la conversación de la sesión al final de `Node/historico_conversaciones.txt` con su fecha y tema.
   2. Documentar todo lo aprendido durante la sesión al final de `Node/resumen_aprendizaje.txt` (manteniendo el estilo, numeración y ejemplos prácticos del archivo).
   3. Actualizar `ROADMAP.md` marcando el tema completado con una tilde `[x]`, registrando la **fecha** correspondiente y señalando `(Próximo paso)` en el siguiente ítem.
+  4. Respaldar todo en la nube (GitHub): ejecutar `git add .`, un `git commit` descriptivo con la fecha/tema de la sesión y `git push` hacia `origin main`.

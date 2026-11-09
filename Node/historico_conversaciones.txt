@@ -160,3 +160,33 @@
      control de roles RBAC).
 
 ================================================================================
+
+[09/11/2026 - Cierre de Fase 4 (JWT + RBAC en app24_jwt.js) y Respaldo en GitHub]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Escribió la Parte 1 (`/register` y `/login` con `jwt.sign`) y luego
+     la Parte 2 en `app24_jwt.js` (Middlewares `verificarToken` con `jwt.verify`,
+     `soloAdmin` para Control de Acceso por Roles RBAC, rutas `/barra` y `/caja-fuerte`
+     y auto-prueba con `fetch`).
+   - Mr Charly: Revisó el código y detectó una línea huérfana en la línea 9
+     (`const { json } = require();`). Tras eliminarla, el servidor corrió al 100%
+     completando toda la Fase 4 del Roadmap.
+   - Inicio de Fase 5 (Git y GitHub - Respaldo en la Nube):
+     * Se instaló Git en Windows mediante `winget install --id Git.Git -e --source winget`.
+     * Se recargó el `PATH` en PowerShell y se configuró la identidad (`tomasng`).
+     * Se inicializó el repositorio en la raíz (`git init`), se realizó el primer
+       commit de 59 archivos y se conectó con el repositorio remoto en GitHub:
+       `https://github.com/tomasng/sistema-bar-backend-nodejs.git`.
+     * Se actualizó `AGENTS.md` (Paso 4) para que el comando `finalizar tarea`
+       también ejecute `git add .`, `git commit` y `git push` automáticamente.
+
+2. Archivos Creados / Actualizados en la Sesión:
+   - Node/app24_jwt.js: Servidor completo con JWT (`jwt.sign`, `jwt.verify`) y RBAC.
+   - AGENTS.md: Agregado el respaldo automático en GitHub al ejecutar `finalizar tarea`.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Fase 5: Documentación de APIs (Escribir un `README.md` profesional con
+     ejemplos de endpoints para reclutadores) y Despliegue a la Nube (Deploy).
+
+================================================================================

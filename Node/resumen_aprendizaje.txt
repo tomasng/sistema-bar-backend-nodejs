@@ -926,3 +926,48 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
        const payload = { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol };
        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+3. Verificación del Token con Middleware (`jwt.verify`):
+   - Lee el token desde `req.headers['authorization']` y comprueba su firma:
+       function verificarToken(req, res, next) {
+           const token = req.headers['authorization'];
+           if (!token) return res.status(401).json({ error: "Token faltante" });
+           try {
+               req.usuario = jwt.verify(token, process.env.JWT_SECRET);
+               next();
+           } catch (error) {
+               return res.status(403).json({ error: "Token inválido o vencido" });
+           }
+       }
+
+4. Control de Acceso por Roles - RBAC (`soloAdmin`):
+   - Segundo middleware que inspecciona `req.usuario.rol` antes de dar acceso:
+       function soloAdmin(req, res, next) {
+           if (req.usuario.rol !== "admin") {
+               return res.status(403).json({ error: "Se requiere rol ADMIN" });
+           }
+           next();
+       }
+       // Uso encadenado en una ruta protegida:
+       app.get('/caja-fuerte', verificarToken, soloAdmin, (req, res) => { ... });
+
+================================================================================
+  ¡FASE 4 COMPLETADA AL 100%: HASHING CON BCRYPT, TOKENS JWT Y ROLES (RBAC)!
+================================================================================
+
+34. CONTROL DE VERSIONES CON GIT Y RESPALDO EN GITHUB (Fase 5)
+--------------------------------------------------------------------------------
+1. Configuración Inicial (Una sola vez por PC / Proyecto):
+   - Identidad:
+       git config --global user.name "tomasng"
+       git config --global user.email "tomasng26@gmail.com"
+   - Inicializar repositorio en la carpeta raíz:
+       git init
+       git branch -M main
+   - Conectar con GitHub:
+       git remote add origin https://github.com/tomasng/sistema-bar-backend-nodejs.git
+
+2. Flujo Diario de Trabajo (Los 3 Comandos Sagrados):
+   - `git add .`                    -> Prepara todos los archivos modificados.
+   - `git commit -m "Descripción"`  -> Guarda una foto en el historial local.
+   - `git push`                     -> Sube los commits a la nube (GitHub).
+
