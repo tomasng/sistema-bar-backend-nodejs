@@ -10,14 +10,21 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());// Para leer JSON en req.body
+const PUERTO = process.env.PORT || process.env.PUERTO || 3001;
 
-const PUERTO = process.env.PUERTO || 3001
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "selloSecretoDelBarPerrisimo2026";
 
 // Para leer JSON en req.body
 
 const usuariosDB = [];
-
+// RUTA DE BIENVENIDA PÚBLICA (Health Check para la Nube)
+app.get('/', (req, res) => {
+    res.json({
+        estado: "🟢 Online en la Nube",
+        proyecto: "🍸 API REST del Bar Perrísimo - por Tomás",
+        endpointsDisponibles: ["/register", "/login", "/barra", "/caja-fuerte"]
+    });
+});
 
 // =============================================================
 // 1. RUTA DE REGISTRO: POST /register
