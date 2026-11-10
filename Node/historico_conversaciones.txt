@@ -245,3 +245,29 @@
      Autenticación + Frontend básico).
 
 ================================================================================
+
+[10/11/2026 - Inicio de FASE 6: Proyecto Final 1 en app25_proyecto_bar.js]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Inició la Fase 6 creando el archivo `Node/app25_proyecto_bar.js` y
+     escribió el Bloque 1 del Proyecto Final 1 (configuración del servidor Express,
+     creación de las 3 tablas relacionales en SQLite `usuarios`, `tragos` y `ventas`
+     en `bar_proyecto1.db`, y función `inicializarDatos()` con carga de tragos y
+     usuario Admin `'Tomás'` encriptado con `bcrypt.hash`).
+   - Mr Charly: Revisó el código y señaló 3 errores de tipeo en las líneas 11, 29
+     y 36 (`databaseSync` -> `DatabaseSync`, `INTEGRER PRIMERY` -> `INTEGER PRIMARY`
+     e `INTEGRER PROMARY` -> `INTEGER PRIMARY`).
+   - Usuario: Corrigió los 3 puntos dejando el Bloque 1 100% limpio.
+   - Mr Charly: Dejó presentado en el chat el Bloque 2 (Middlewares `verificarToken`
+     y `soloAdmin`, más las rutas públicas `GET /`, `GET /api/carta` y
+     `POST /api/comprar`).
+
+2. Archivos Creados / Actualizados en la Sesión:
+   - Node/app25_proyecto_bar.js: Bloque 1 completado y validado (líneas 1 a 76).
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Escribir el Bloque 2 (Middlewares + Rutas públicas) y Bloque 3 (Login JWT +
+     Rutas Admin + `app.listen`) en `app25_proyecto_bar.js` y conectar el Frontend.
+
+================================================================================

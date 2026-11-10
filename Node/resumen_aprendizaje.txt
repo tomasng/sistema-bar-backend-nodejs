@@ -1016,3 +1016,16 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
   ¡FASE 5 COMPLETADA AL 100%: GIT, GITHUB, DOCUMENTACIÓN README Y DEPLOY CLOUD!
 ================================================================================
 
+37. INICIO DE FASE 6: PROYECTO FINAL 1 - ARQUITECTURA INTEGRAL (app25_proyecto_bar.js)
+--------------------------------------------------------------------------------
+1. Esquema Relacional de 3 Tablas en SQLite (`bar_proyecto1.db`):
+   - `usuarios`: `id`, `nombre` (`UNIQUE`), `password_hash` (Bcrypt) y `rol`.
+   - `tragos`: `id`, `nombre` (`UNIQUE`), `precio` y `stock`.
+   - `ventas`: `id`, `cliente`, `trago_id` (`FOREIGN KEY REFERENCES tragos(id)`),
+     `precio_cobrado`, `vuelto` y `fecha`.
+
+2. Semilla Automática (`INSERT OR IGNORE`):
+   - La función `inicializarDatos()` utiliza `INSERT OR IGNORE INTO ...` para
+     cargar la carta inicial y el usuario Admin por defecto (`Tomás` con hash de
+     `bcrypt`) sin duplicar registros cada vez que reinicia el servidor.
+
