@@ -76,3 +76,89 @@ async function inicializarDatos() {
 }
 
 
+// =============================================================
+// 2. MIDDLEWARES DE SEGURIDAD (JWT + RBAC)
+// =============================================================
+
+function verificarToken(req, res, next) {
+    const token = req.headers['authorization'];
+    if (!token) {
+        return res.status(401).join({ error: "🚫 Falta el Token VIP." });
+    }
+    try {
+        req.usuario = jwt.verify(token, JWT_SECRET);
+        next();
+    } catch (error) {
+        return res.status(403).json({ error: "🚨 Token inválido o vencido." });
+    }
+
+}
+
+
+function soloAdmin(req, res, next) {
+    if (req.usuario.rol !== 'admin') {
+        return res.status(403).json({ error: "⛔ Acceso exclusivo para Administradores." });
+    }
+    next();
+}
+
+// =============================================================
+// 3. RUTAS PÚBLICAS (FRONTEND WEB, CARTA Y COMPRAR TRAGO)
+// =============================================================
+
+// Servimos la interfaz web principal
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'bar_fullstack.html'));
+});
+
+// Obtener todos los tragos desde SQLite
+
+app.get('/api/carta', (req, res) => {
+    const tragos = db.prepare('SELECT * FROM tragos').all();
+    res.json(tragos);
+});
+
+// Comprar un trago en la barra
+app.post('/api/comprar', (req, res) => {
+    const { cliente, edad, efectivo, tragoId } = req.body;
+
+    if (edad < 18) {
+        return res.status(400).json({
+            exito: false, mensaje: `🛑 Alto ahí ${cliente}:
+            Prohibida la venta a los chamaquitos... `});
+    }
+
+    const trago = db.prepare('SELECT * FROM tragos WHERE id = ?').get(tragoId);
+    if (!trago) {
+        return res.status(404).json({ exito: false, mensaje: "❌ Ese trago no existe." });
+
+    }
+    if (trago.stock <= 0) {
+        return res.status(400).json({ exito: false, mensaje: `⛔ Se agotó el stock de ${trago.nombre}.` });
+    }
+
+    if (efectivo < trago.precio) {
+        const falta = trago.precio - efectivo;
+        return res.status(400).json({ exito: false, mensaje: `💸 No te alcanza, ${cliente}. Te faltan $${falta}.` });
+    }
+
+    const vuelto = efectivo - trago.precio;
+
+    // A) Descontamos 1 unidad del stock en SQLite
+
+    db.prepare('UPDATE tragos SET stock = stock - 1 WHERE id = ? ').run(trago.id)
+
+    // B) Registramos el ticket en la tabla 'ventas'
+    db.prepare(
+        'INSERT INTO ventas (cliente, trago_id, precio_cobrado, vuelto) VALUES  (?,?,?,?)'
+    ).run(cliente, trago.id, trago.precio, vuelto);
+
+    res.json({
+        exito: true,
+        mensaje: `🍸 ¡Salud, ${cliente}! Disfrutá tu ${trago.nombre}.`,
+        vuelto: vuelto
+    });
+
+
+});

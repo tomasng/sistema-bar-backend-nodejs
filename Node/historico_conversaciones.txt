@@ -271,3 +271,31 @@
      Rutas Admin + `app.listen`) en `app25_proyecto_bar.js` y conectar el Frontend.
 
 ================================================================================
+
+[11/11/2026 - Proyecto Final 1 (Bloque 2): Middlewares y Rutas Públicas en app25]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Consultó qué significaban las barras azules/verdes al costado de los
+     números de línea en el editor.
+   - Mr Charly: Explicó que son los indicadores de cambios de Git (Gutter Indicators:
+     verde = líneas nuevas, azul = líneas modificadas, rojo = líneas borradas
+     respecto al último commit).
+   - Avance en `app25_proyecto_bar.js` (Bloque 2):
+     * El usuario escribió los middlewares `verificarToken` y `soloAdmin` más las
+       rutas públicas `GET /`, `GET /api/carta` y `POST /api/comprar` (con descuento
+       de stock `UPDATE` y registro de ticket `INSERT` en SQLite).
+     * Se corrigió `if (!token)` en la línea 85 (quedando pendiente cambiar `.join`
+       por `.json` en la línea 86 al retomar).
+     * Mr Charly dejó presentado en el chat el Bloque 3 final del servidor
+       (`POST /api/login`, `GET /api/admin/caja` con `JOIN` y `SUM`,
+       `POST /api/admin/reponer` e `inicializarDatos().then(...)`).
+
+2. Archivos Actualizados en la Sesión:
+   - Node/app25_proyecto_bar.js: Bloque 2 agregado (líneas 79 a 164).
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Cambiar `.join` por `.json` en la línea 86 de `app25_proyecto_bar.js`,
+     escribir el Bloque 3 final del servidor y crear el Frontend `bar_fullstack.html`.
+
+================================================================================

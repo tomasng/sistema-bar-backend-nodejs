@@ -1029,3 +1029,14 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
      cargar la carta inicial y el usuario Admin por defecto (`Tomás` con hash de
      `bcrypt`) sin duplicar registros cada vez que reinicia el servidor.
 
+3. Indicadores Visuales de Git en el Editor (Gutter Indicators):
+   - Barra Verde: Líneas nuevas agregadas desde el último `git commit`.
+   - Barra Azul: Líneas modificadas respecto al último `git commit`.
+   - Triángulo Rojo: Punto donde se eliminaron líneas.
+
+4. Flujo de Compra Relacional en `POST /api/comprar` (Bloque 2 de `app25`):
+   - Valida mayoría de edad (`edad >= 18`), existencia del trago (`SELECT * FROM tragos WHERE id = ?`),
+     disponibilidad (`stock > 0`) y dinero suficiente (`efectivo >= trago.precio`).
+   - Descuenta 1 unidad del inventario (`UPDATE tragos SET stock = stock - 1 WHERE id = ?`)
+     e inserta el ticket vinculado (`INSERT INTO ventas ...`).
+
