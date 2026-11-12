@@ -83,7 +83,7 @@ async function inicializarDatos() {
 function verificarToken(req, res, next) {
     const token = req.headers['authorization'];
     if (!token) {
-        return res.status(401).join({ error: "🚫 Falta el Token VIP." });
+        return res.status(401).json({ error: "🚫 Falta el Token VIP." });
     }
     try {
         req.usuario = jwt.verify(token, JWT_SECRET);
@@ -161,4 +161,85 @@ app.post('/api/comprar', (req, res) => {
     });
 
 
+});
+
+
+// =============================================================
+// 4. LOGIN DE USUARIOS Y RUTAS DE ADMINISTRACIÓN (JWT + RBAC)
+// =============================================================
+
+
+// Login: valida con Bcrypt y entrega el Token VIP (JWT)
+
+app.post('/api/login', async (req, res) => {
+    const { nombre, password } = req.body;
+
+    const usuario = db.prepare('SELECT * FROM usuarios WHERE nombre = ?').get(nombre);
+    if (!usuario) {
+        return res.status(401).json({ error: "❌ Usuario o contraseña incorrectos." });
+    }
+
+    const coincide = await bcrypt.compare(password, usuario.password_hash);
+    if (!coincide) {
+        return res.status(401).json({ error: "❌ Usuario o contraseña incorrectos." });
+    }
+
+    const token = jwt.sign(
+        { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol },
+        JWT_SECRET,
+        { expiresIn: '2h' }
+    );
+
+    res.json({
+        mensaje: `🔓 Bienvenido Jefe ${usuario.nombre}`,
+        token: token
+    });
+});
+
+
+// Reporte de Caja Fuerte (JOIN ventas + tragos y SUM total) - SOLO ADMIN
+
+app.get('/api/admin/caja', verificarToken, soloAdmin, (req, res) => {
+    const ventas = db.prepare(`
+        SELECT
+            ventas.id,
+            ventas.cliente,
+            tragos.nombre AS trago,
+            ventas.precio_cobrado,
+            ventas.vuelto,
+            ventas.fecha
+        FROM ventas
+        JOIN tragos ON ventas.trago_id = tragos.id
+        ORDER BY ventas.id DESC
+        `).all();
+
+    const resumen = db.prepare(`
+            SELECT
+                COUNT(*) AS total_tickets,
+                COALESCE(SUM(precio_cobrado),0) AS recaudacion_total
+            FROM ventas
+        `).get();
+
+    res.json({ resumen, ventas });
+
+});
+
+// Reponer Stock de un trago - SOLO ADMIN
+app.post('/api/admin/reponer', verificarToken, soloAdmin, (req, res) => {
+    const { tragoId, cantidad } = req.body;
+
+    db.prepare('UPDATE tragos SET stock = stock + ? WHERE id = ?').run(cantidad, tragoId);
+
+    res.json({ mensaje: `📦 Se sumaron +${cantidad} unidades al inventario.` });
+
+});
+
+// =============================================================
+// 5. INICIALIZAR DATOS Y ENCENDER EL SERVIDOR
+// =============================================================
+
+inicializarDatos().then(() => {
+    app.listen(PUERTO, () => {
+        console.log(`🚀 Proyecto Final 1 del Bar corriendo en http://localhost:${PUERTO}`);
+    });
 });

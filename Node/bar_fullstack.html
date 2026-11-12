@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍸 Sistema Full-Stack del Bar - Tomás</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 25px;
+        }
+        h1 { text-align: center; color: #38bdf8; margin-bottom: 5px; }
+        .subtitulo { text-align: center; color: #94a3b8; margin-top: 0; margin-bottom: 25px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 25px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+        h2 { margin-top: 0; color: #fbbf24; font-size: 20px; }
+        label { display: block; margin-top: 12px; font-size: 14px; font-weight: bold; }
+        input, select {
+            width: 100%; padding: 10px; margin-top: 5px;
+            border-radius: 6px; border: 1px solid #475569;
+            background: #0f172a; color: white; box-sizing: border-box;
+        }
+        button {
+            width: 100%; padding: 11px; margin-top: 16px;
+            background: #38bdf8; color: #0f172a; font-weight: bold;
+            border: none; border-radius: 6px; cursor: pointer; font-size: 15px;
+        }
+        button:hover { background: #0284c7; color: white; }
+        .btn-admin { background: #fbbf24; }
+        .btn-admin:hover { background: #d97706; color: white; }
+        .item-stock {
+            display: flex; justify-content: space-between;
+            padding: 6px 0; border-bottom: 1px dashed #334155; font-size: 14px;
+        }
+        .alerta {
+            margin-top: 15px; padding: 12px; border-radius: 8px;
+            text-align: center; font-weight: bold; display: none;
+        }
+        .ok { background: rgba(34,197,94,0.2); border: 1px solid #22c55e; color: #4ade80; }
+        .err { background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #f87171; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        th, td { border-bottom: 1px solid #334155; padding: 6px; text-align: left; }
+        th { color: #38bdf8; }
+    </style>
+</head>
+<body>
+    <h1>🍸 Sistema de Gestión Full-Stack del Bar</h1>
+    <p class="subtitulo">Node.js + Express + SQLite Relacional + Bcrypt + JWT</p>
+
+    <div class="grid">
+        <!-- PANEL 1: BARRA DE CLIENTES -->
+        <div class="card">
+            <h2>🍹 1. Barra de Clientes (Público)</h2>
+            <div id="stock-vivo">Cargando carta...</div>
+
+            <form id="form-compra">
+                <label>👤 Tu Nombre:</label>
+                <input type="text" id="cliente" placeholder="Ej: Catalina" required>
+                <label>🎂 Tu Edad:</label>
+                <input type="number" id="edad" placeholder="Ej: 22" required>
+                <label>💵 Efectivo ($):</label>
+                <input type="number" id="efectivo" placeholder="Ej: 5000" required>
+                <label>🍸 Elegí tu Trago:</label>
+                <select id="select-trago"></select>
+                <button type="submit">¡Comprar Trago!</button>
+            </form>
+            <div id="msg-compra" class="alerta"></div>
+        </div>
+
+        <!-- PANEL 2: ADMINISTRACIÓN CON JWT -->
+        <div class="card">
+            <h2>🔐 2. Oficina VIP Admin (Protegido con JWT)</h2>
+            <div id="box-login">
+                <p style="font-size:13px; color:#94a3b8;">Credenciales por defecto: <b>Tomás</b> / <b>admin123</b></p>
+                <label>Usuario Admin:</label>
+                <input type="text" id="user-admin" value="Tomás">
+                <label>Contraseña:</label>
+                <input type="password" id="pass-admin" value="admin123">
+                <button class="btn-admin" onclick="loginAdmin()">🔑 Iniciar Sesión (Obtener JWT)</button>
+            </div>
+
+            <div id="panel-vip" style="display:none;">
+                <div class="alerta ok" style="display:block;">🔓 Token JWT Activo (Rol: ADMIN)</div>
+                <h3 style="margin-bottom:5px;">💰 Caja Fuerte: $<span id="total-caja">0</span> (<span id="total-tickets">0</span> ventas)</h3>
+
+                <label>📦 Reponer Stock (+10 unidades):</label>
+                <select id="select-reponer"></select>
+                <button class="btn-admin" onclick="reponerStock()">➕ Sumar +10 al Inventario</button>
+
+                <h4 style="margin-bottom:5px;">📊 Últimos Tickets (JOIN SQL):</h4>
+                <table>
+                    <thead><tr><th>#</th><th>Cliente</th><th>Trago</th><th>Pagó</th></tr></thead>
+                    <tbody id="tabla-ventas"></tbody>
+                </table>
+            </div>
+            <div id="msg-admin" class="alerta"></div>
+        </div>
+    </div>
+
+    <script>
+        let tokenVIP = null;
+
+        async function cargarCarta() {
+            const res = await fetch('/api/carta');
+            const tragos = await res.json();
+
+            document.getElementById('stock-vivo').innerHTML = tragos.map(t => `
+                <div class="item-stock">
+                    <span>🍸 <b>${t.nombre}</b> ($${t.precio})</span>
+                    <span style="color:${t.stock > 0 ? '#4ade80' : '#f87171'}">${t.stock} u.</span>
+                </div>
+            `).join('');
+
+            const opciones = tragos.map(t => `<option value="${t.id}">${t.nombre} ($${t.precio})</option>`).join('');
+            document.getElementById('select-trago').innerHTML = opciones;
+            document.getElementById('select-reponer').innerHTML = opciones;
+        }
+
+        document.getElementById('form-compra').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const res = await fetch('/api/comprar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cliente: document.getElementById('cliente').value,
+                    edad: Number(document.getElementById('edad').value),
+                    efectivo: Number(document.getElementById('efectivo').value),
+                    tragoId: Number(document.getElementById('select-trago').value)
+                })
+            });
+            const data = await res.json();
+            const msg = document.getElementById('msg-compra');
+            msg.style.display = 'block';
+            msg.className = 'alerta ' + (data.exito ? 'ok' : 'err');
+            msg.textContent = data.mensaje + (data.vuelto !== undefined ? ` (Vuelto: $${data.vuelto})` : '');
+            await cargarCarta();
+            if (tokenVIP) await cargarCajaAdmin();
+        });
+
+        async function loginAdmin() {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: document.getElementById('user-admin').value,
+                    password: document.getElementById('pass-admin').value
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                const msg = document.getElementById('msg-admin');
+                msg.style.display = 'block';
+                msg.className = 'alerta err';
+                msg.textContent = data.error;
+                return;
+            }
+            tokenVIP = data.token;
+            document.getElementById('box-login').style.display = 'none';
+            document.getElementById('msg-admin').style.display = 'none';
+            document.getElementById('panel-vip').style.display = 'block';
+            await cargarCajaAdmin();
+        }
+
+        async function cargarCajaAdmin() {
+            const res = await fetch('/api/admin/caja', {
+                headers: { 'authorization': tokenVIP }
+            });
+            const data = await res.json();
+            document.getElementById('total-caja').textContent = data.resumen.recaudacion_total;
+            document.getElementById('total-tickets').textContent = data.resumen.total_tickets;
+            document.getElementById('tabla-ventas').innerHTML = data.ventas.map(v => `
+                <tr><td>#${v.id}</td><td>${v.cliente}</td><td>${v.trago}</td><td>$${v.precio_cobrado}</td></tr>
+            `).join('');
+        }
+
+        async function reponerStock() {
+            const tragoId = Number(document.getElementById('select-reponer').value);
+            await fetch('/api/admin/reponer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': tokenVIP
+                },
+                body: JSON.stringify({ tragoId, cantidad: 10 })
+            });
+            await cargarCarta();
+        }
+
+        cargarCarta();
+    </script>
+</body>
+</html>
+
