@@ -50,6 +50,6 @@ Este documento registra tu progreso real paso a paso. Se actualizará **automát
 ---
 
 ## 📌 FASE 6: Proyectos Finales y Salida Laboral
-- [ ] **Proyecto 1: Sistema de Gestión de Comercio / API de Bar Completa** (CRUD + Base de Datos + Autenticación + Frontend básico) — *(En progreso 11/11/2026: Bloques 1 y 2 listos en `app25_proyecto_bar.js`; Próximo paso: Bloque 3 de Login/Admin y Frontend `bar_fullstack.html`)*
-- [ ] **Proyecto 2: API de E-commerce o Reservas** (Manejo de estados, pagos o turnos).
+- [x] **Proyecto 1: Sistema de Gestión de Comercio / API de Bar Completa** (CRUD + Base de Datos SQLite + Autenticación Bcrypt/JWT + Frontend Full-Stack en `app25_proyecto_bar.js` y `bar_fullstack.html`) — *(Completado: 12/11/2026)*
+- [ ] **Proyecto 2: API de E-commerce o Reservas** (Manejo de estados, pagos o turnos) — *(Próximo paso)*
 - [ ] **Armado de CV, LinkedIn y Postulaciones**: Estrategia de búsqueda para puestos Trainee / Jr y captación de clientes freelance.

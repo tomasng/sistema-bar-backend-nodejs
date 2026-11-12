@@ -299,3 +299,39 @@
      escribir el Bloque 3 final del servidor y crear el Frontend `bar_fullstack.html`.
 
 ================================================================================
+
+[12/11/2026 - Cierre de Proyecto Final 1 Full-Stack (app25 + bar_fullstack.html) y Deploy en Render]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Escribió el Bloque 3 en `app25_proyecto_bar.js` y pidió revisar y
+     corregir errores.
+   - Mr Charly: Revisó el archivo completo (245 líneas) e identificó 6 detalles de
+     tipeo puntuales:
+     * Línea 86: `.join({` -> `.json({`
+     * Línea 188: `usuarios.id` y `usuarios.rol` -> `usuario.id` y `usuario.rol`
+     * Línea 212: `ON ventas.trago_id = trago.id+` -> `ON ventas.trago_id = tragos.id`
+     * Línea 219: `COLAESCE` -> `COALESCE`
+     * Línea 231: `SET stock = stock + WHERE` -> `SET stock = stock + ? WHERE`
+     * Línea 241: `.them(() => {` -> `.then(() => {`
+   - Usuario: Corrigió los 6 puntos y se verificó con `node --check app25_proyecto_bar.js`
+     (0 errores de sintaxis).
+   - Usuario: Dio permiso explícito (`tenes mi permiso !`) para que Mr Charly creara
+     el archivo visual `Node/bar_fullstack.html` y actualizara `Node/package.json`.
+   - Mr Charly: Creó `Node/bar_fullstack.html` (con Barra de Clientes conectada a
+     `GET /api/carta` y `POST /api/comprar`, y Panel Admin VIP conectado con JWT a
+     `POST /api/login`, `GET /api/admin/caja` y `POST /api/admin/reponer`), actualizó
+     `"start": "node app25_proyecto_bar.js"` en `Node/package.json` y subió los
+     cambios a GitHub/Render (`commit 9c935d4`) para poder abrir la app desde el
+     celular en `https://sistema-bar-backend-nodejs.onrender.com` o por Wi-Fi local.
+
+2. Archivos Actualizados en la Sesión:
+   - Node/app25_proyecto_bar.js: Servidor Full-Stack completo (245 líneas) verificado.
+   - Node/bar_fullstack.html: Interfaz web Full-Stack (Barra Pública + Panel Admin VIP).
+   - Node/package.json: Script `start` apuntando a `node app25_proyecto_bar.js`.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Iniciar el **Proyecto 2: API de E-commerce o Reservas** (Manejo de estados,
+     pagos o turnos).
+
+================================================================================

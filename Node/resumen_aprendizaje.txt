@@ -1040,3 +1040,20 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
    - Descuenta 1 unidad del inventario (`UPDATE tragos SET stock = stock - 1 WHERE id = ?`)
      e inserta el ticket vinculado (`INSERT INTO ventas ...`).
 
+5. Rutas de Administración Protegidas con JWT + SQLite (Bloque 3 de `app25`):
+   - `POST /api/login`: Busca al usuario en SQLite (`SELECT * FROM usuarios WHERE nombre = ?`),
+     compara la contraseña con `await bcrypt.compare(password, usuario.password_hash)`
+     y emite el pase VIP con `jwt.sign({ id: usuario.id, nombre: usuario.nombre, rol: usuario.rol }, JWT_SECRET, { expiresIn: '2h' })`.
+   - `GET /api/admin/caja`: Protegida por `verificarToken` y `soloAdmin`. Combina
+     `ventas` y `tragos` con `INNER JOIN` para armar el historial detallado y calcula
+     la recaudación total con `SELECT COALESCE(SUM(precio_cobrado), 0) AS total FROM ventas`.
+   - `POST /api/admin/reponer`: Protegida por `verificarToken` y `soloAdmin`. Incrementa
+     el stock con `UPDATE tragos SET stock = stock + ? WHERE id = ?`.
+
+6. Integración Frontend Full-Stack (`bar_fullstack.html`):
+   - Sirve el archivo HTML directamente desde Express en `GET /` con
+     `res.sendFile(path.join(__dirname, 'bar_fullstack.html'))`.
+   - Utiliza `fetch()` asíncrono para consumir las rutas públicas (`/api/carta`,
+     `/api/comprar`) y envía el token JWT en las cabeceras (`headers: { 'authorization': tokenVIP }`)
+     para desbloquear la bóveda y reponer stock desde el navegador o el celular.
+
