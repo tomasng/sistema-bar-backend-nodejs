@@ -1057,3 +1057,27 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
      `/api/comprar`) y envía el token JWT en las cabeceras (`headers: { 'authorization': tokenVIP }`)
      para desbloquear la bóveda y reponer stock desde el navegador o el celular.
 
+================================================================================
+
+38. PROYECTO FINAL 2: SISTEMA DE RESERVAS, TURNOS Y MÁQUINA DE ESTADOS (app26_proyecto_reservas.js)
+--------------------------------------------------------------------------------
+1. Modelado de Mesas y Reservas con Estados (`reservas_proyecto2.db`):
+   - Tabla `mesas`: `id`, `nombre` (`UNIQUE`), `capacidad` (cantidad de personas) y
+     `precio_sena` (monto requerido para confirmar).
+   - Tabla `reservas`: `id`, `cliente`, `telefono`, `mesa_id` (`FOREIGN KEY REFERENCES mesas(id)`),
+     `turno` (horario reservado), `estado` (`DEFAULT 'PENDIENTE'`), `sena_pagada`
+     (`DEFAULT 0`) y `creada_en` (`DEFAULT CURRENT_TIMESTAMP`).
+
+2. Ciclo de Vida / Máquina de Estados de una Reserva:
+   - `PENDIENTE`: Estado inicial cuando el cliente solicita la mesa.
+   - `CONFIRMADA`: Estado cuando se registra el pago de la seña (`sena_pagada`).
+   - `CANCELADA`: Libera la mesa en ese horario para que otro cliente pueda reservarla.
+
+3. Validación Anti-Overbooking (Evitar Doble Reserva) y Código HTTP `409 Conflict`:
+   - Antes de insertar una reserva, se verifica si existe algún registro activo para
+     la misma mesa y el mismo turno:
+     `SELECT * FROM reservas WHERE mesa_id = ? AND turno = ? AND estado != 'CANCELADA'`
+   - Si ya existe una reserva activa (`PENDIENTE` o `CONFIRMADA`), el servidor responde
+     con el código HTTP **`409 Conflict`**, que indica que la petición choca con el
+     estado actual del recurso en la base de datos.
+

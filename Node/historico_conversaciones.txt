@@ -335,3 +335,34 @@
      pagos o turnos).
 
 ================================================================================
+
+[17/11/2026 - Inicio del Proyecto Final 2: Sistema de Reservas de Mesas VIP (app26_proyecto_reservas.js)]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Pidió comenzar con el Proyecto 2 (`vamos con el proyecto 2`).
+   - Mr Charly: Diseñó la arquitectura del **Sistema de Reservas de Mesas VIP y
+     Pagos de Seña** en `Node/app26_proyecto_reservas.js` con base de datos SQLite
+     (`reservas_proyecto2.db`), tablas relacionales `mesas` y `reservas`, máquina de
+     estados (`PENDIENTE`, `CONFIRMADA`, `CANCELADA`) y validación anti-overbooking
+     (evitar doble reserva de la misma mesa en el mismo turno con código HTTP `409 Conflict`).
+   - Usuario: Escribió el Bloque 1 completo (líneas 1 a 54), corrigió los dos detalles
+     de SQL en `CREATE TABLE reservas` (línea 25 y `FOREIGN KEY` en línea 33) y avanzó
+     con el Bloque 2 hasta la línea 97 (`GET /`, `GET /api/mesas` y primera mitad de
+     `POST /api/reservar`).
+
+2. Archivos Actualizados en la Sesión:
+   - Node/app26_proyecto_reservas.js: Creado con Bloque 1 completo y Bloque 2 en
+     progreso (líneas 1 a 97).
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Al retomar en `Node/app26_proyecto_reservas.js`:
+     * Corregir detalles de tipeo en Bloque 2: línea 64 (`'/pai/mesas'` -> `'/api/mesas'`),
+       línea 69 (`reservas.tur no` -> `reservas.turno`), línea 73 (`DEC` -> `DESC`),
+       línea 82 (`'api/reservar'` -> `'/api/reservar'`) y línea 95 (`'CANSELADA'` -> `'CANCELADA'`).
+     * Completar el final de `POST /api/reservar` (`if (!mesa)`, `if (ocupada)` con
+       `409 Conflict` e `INSERT INTO reservas`).
+     * Escribir el Bloque 3 (cambio de estado a `CONFIRMADA` al pagar seña y `CANCELADA`,
+       más arranque del servidor).
+
+================================================================================
