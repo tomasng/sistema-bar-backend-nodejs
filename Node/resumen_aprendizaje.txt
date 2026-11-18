@@ -1081,3 +1081,16 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
      con el código HTTP **`409 Conflict`**, que indica que la petición choca con el
      estado actual del recurso en la base de datos.
 
+4. Transiciones de Estado con `PUT` y Parámetros de Ruta (`req.params.id`):
+   - `PUT /api/reservas/:id/pagar`: Cruza la reserva con su mesa (`INNER JOIN`),
+     verifica que no esté `CANCELADA` ni ya `CONFIRMADA`, valida que el `monto` cubra
+     el `precio_sena` y actualiza `SET estado = 'CONFIRMADA', sena_pagada = ? WHERE id = ?`.
+   - `PUT /api/reservas/:id/cancelar`: Actualiza `SET estado = 'CANCELADA' WHERE id = ?`,
+     liberando automáticamente el turno horario para futuros clientes.
+
+5. Frontend Full-Stack de Reservas (`reservas_fullstack.html`):
+   - Consume `GET /api/mesas`, `POST /api/reservar`, `PUT /api/reservas/:id/pagar` y
+     `PUT /api/reservas/:id/cancelar` mediante `fetch()`, renderizando etiquetas de
+     estado (`PENDIENTE`, `CONFIRMADA`, `CANCELADA`) y calculando el total de señas
+     cobradas en tiempo real.
+

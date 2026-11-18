@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📅 Reservas VIP - El Bar de Tomás (Proyecto 2)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #f59e0b;
+      --green: #10b981;
+      --red: #ef4444;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 18px;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border-radius: 14px;
+      border: 1px solid #475569;
+    }
+    header h1 { margin: 0 0 6px; color: var(--accent); }
+    header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+    }
+    .panel h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    .mesas-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .mesa-card {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+    }
+    .mesa-card strong { display: block; color: #38bdf8; margin-bottom: 4px; }
+    .mesa-card span { font-size: 0.85rem; color: var(--muted); display: block; }
+
+    label {
+      display: block;
+      margin: 10px 0 4px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    .btn-primary {
+      width: 100%;
+      margin-top: 16px;
+      background: var(--accent);
+      color: #0f172a;
+      font-size: 1rem;
+    }
+
+    .alerta {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      font-size: 0.92rem;
+    }
+    .alerta.ok { display: block; background: rgba(16, 185, 129, 0.2); border: 1px solid var(--green); color: #6ee7b7; }
+    .alerta.err { display: block; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: #fca5a5; }
+
+    .resumen-caja {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      border: 1px solid #334155;
+    }
+    .resumen-caja strong { color: var(--green); font-size: 1.2rem; }
+
+    .reserva-item {
+      background: #0f172a;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      margin-bottom: 12px;
+    }
+    .reserva-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .badge.PENDIENTE { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #f59e0b; }
+    .badge.CONFIRMADA { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #10b981; }
+    .badge.CANCELADA { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid #ef4444; }
+
+    .acciones {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      align-items: center;
+    }
+    .acciones input {
+      width: 130px;
+      padding: 7px 10px;
+      font-size: 0.85rem;
+    }
+    .btn-pagar { background: var(--green); color: #0f172a; font-size: 0.85rem; padding: 8px 12px; }
+    .btn-cancelar { background: var(--red); color: white; font-size: 0.85rem; padding: 8px 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📅 Sistema de Reservas VIP &amp; Señas</h1>
+      <p>Proyecto Final 2 — Anti-Overbooking (409 Conflict) + Máquina de Estados (PENDIENTE / CONFIRMADA / CANCELADA)</p>
+    </header>
+
+    <div class="grid">
+      <!-- COLUMNA IZQUIERDA: MESAS Y FORMULARIO -->
+      <div class="panel">
+        <h2>🪑 1. Catálogo de Mesas y Nueva Reserva</h2>
+        <div id="listaMesas" class="mesas-list"></div>
+
+        <label>Nombre del Cliente</label>
+        <input type="text" id="cliente" placeholder="Ej: Martín Palermo" />
+
+        <label>Teléfono / WhatsApp</label>
+        <input type="text" id="telefono" placeholder="Ej: 11-5555-9999" />
+
+        <label>Seleccionar Mesa</label>
+        <select id="mesa_id"></select>
+
+        <label>Seleccionar Turno Horario</label>
+        <select id="turno">
+          <option value="21:00">21:00 hs (Turno Cena)</option>
+          <option value="22:30">22:30 hs (Turno Previa)</option>
+          <option value="00:00">00:00 hs (Turno Medianoche VIP)</option>
+        </select>
+
+        <button class="btn-primary" onclick="crearReserva()">📅 Solicitar Reserva</button>
+        <div id="alertaForm" class="alerta"></div>
+      </div>
+
+      <!-- COLUMNA DERECHA: PANEL DE RESERVAS Y ESTADOS -->
+      <div class="panel">
+        <h2>📋 2. Gestión de Reservas y Pagos de Seña</h2>
+        <div class="resumen-caja">
+          <span>💰 Total Señas Cobradas (Confirmadas):</span>
+          <strong id="totalSenas">$0</strong>
+        </div>
+
+        <div id="alertaAccion" class="alerta" style="margin-bottom: 12px;"></div>
+        <div id="listaReservas"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let catalogoMesas = [];
+
+    async function cargarDatos() {
+      const res = await fetch('/api/mesas');
+      const data = await res.json();
+      catalogoMesas = data.mesas;
+
+      // Renderizar tarjetas de mesas y selector
+      const divMesas = document.getElementById('listaMesas');
+      const selectMesa = document.getElementById('mesa_id');
+      divMesas.innerHTML = '';
+      selectMesa.innerHTML = '';
+
+      data.mesas.forEach(m => {
+        divMesas.innerHTML += `
+          <div class="mesa-card">
+            <strong>${m.nombre}</strong>
+            <span>👥 Capacidad: ${m.capacidad} personas</span>
+            <span>💳 Seña: $${m.precio_sena}</span>
+          </div>
+        `;
+        selectMesa.innerHTML += `<option value="${m.id}">${m.nombre} (${m.capacidad} pers. - Seña $${m.precio_sena})</option>`;
+      });
+
+      // Calcular total de señas cobradas y mostrar reservas
+      let totalRecaudado = 0;
+      const divReservas = document.getElementById('listaReservas');
+      divReservas.innerHTML = '';
+
+      if (data.reservas.length === 0) {
+        divReservas.innerHTML = '<p style="color:#94a3b8; text-align:center;">Aún no hay reservas registradas. ¡Creá la primera a la izquierda!</p>';
+      }
+
+      data.reservas.forEach(r => {
+        if (r.estado === 'CONFIRMADA') {
+          totalRecaudado += Number(r.sena_pagada || 0);
+        }
+
+        const mesaObj = catalogoMesas.find(m => m.id === r.mesa_id);
+        const precioSena = mesaObj ? mesaObj.precio_sena : 0;
+
+        let botonesHTML = '';
+        if (r.estado === 'PENDIENTE') {
+          botonesHTML = `
+            <div class="acciones">
+              <input type="number" id="monto_${r.id}" value="${precioSena}" placeholder="Monto $" />
+              <button class="btn-pagar" onclick="pagarSena(${r.id})">💳 Pagar Seña</button>
+              <button class="btn-cancelar" onclick="cancelarReserva(${r.id})">❌ Cancelar</button>
+            </div>
+          `;
+        } else if (r.estado === 'CONFIRMADA') {
+          botonesHTML = `
+            <div class="acciones">
+              <span style="color:#6ee7b7; font-size:0.85rem;">✅ Seña abonada ($${r.sena_pagada})</span>
+              <button class="btn-cancelar" onclick="cancelarReserva(${r.id})">❌ Cancelar y Liberar</button>
+            </div>
+          `;
+        }
+
+        divReservas.innerHTML += `
+          <div class="reserva-item">
+            <div class="reserva-header">
+              <strong>#${r.id} — ${r.cliente} (${r.telefono})</strong>
+              <span class="badge ${r.estado}">${r.estado}</span>
+            </div>
+            <div style="font-size: 0.9rem; color: #cbd5e1;">
+              🪑 <b>${r.mesa}</b> | ⏰ Turno: <b>${r.turno} hs</b>
+            </div>
+            ${botonesHTML}
+          </div>
+        `;
+      });
+
+      document.getElementById('totalSenas').textContent = '$' + totalRecaudado;
+    }
+
+    function mostrarMensaje(idElemento, texto, esError) {
+      const el = document.getElementById(idElemento);
+      el.textContent = texto;
+      el.className = 'alerta ' + (esError ? 'err' : 'ok');
+    }
+
+    async function crearReserva() {
+      const cliente = document.getElementById('cliente').value.trim();
+      const telefono = document.getElementById('telefono').value.trim();
+      const mesa_id = Number(document.getElementById('mesa_id').value);
+      const turno = document.getElementById('turno').value;
+
+      const res = await fetch('/api/reservar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cliente, telefono, mesa_id, turno })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        mostrarMensaje('alertaForm', data.error, true);
+      } else {
+        mostrarMensaje('alertaForm', data.mensaje, false);
+        document.getElementById('cliente').value = '';
+        document.getElementById('telefono').value = '';
+        cargarDatos();
+      }
+    }
+
+    async function pagarSena(id) {
+      const inputMonto = document.getElementById('monto_' + id);
+      const monto = Number(inputMonto.value);
+
+      const res = await fetch(`/api/reservas/${id}/pagar`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ monto })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        mostrarMensaje('alertaAccion', data.error, true);
+      } else {
+        mostrarMensaje('alertaAccion', data.mensaje, false);
+        cargarDatos();
+      }
+    }
+
+    async function cancelarReserva(id) {
+      const res = await fetch(`/api/reservas/${id}/cancelar`, {
+        method: 'PUT'
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        mostrarMensaje('alertaAccion', data.error, true);
+      } else {
+        mostrarMensaje('alertaAccion', data.mensaje, false);
+        cargarDatos();
+      }
+    }
+
+    cargarDatos();
+  </script>
+</body>
+</html>
+

@@ -61,16 +61,16 @@ app.get('/', (req, res) => {
 });
 
 // 5. GET /api/mesas - Ver catálogo de mesas y listado de reservas
-app.get('/pai/mesas', (req, res) => {
+app.get('/api/mesas', (req, res) => {
     const mesas = db.prepare('SELECT * FROM mesas').all();
 
     const reservas = db.prepare(`
         SELECT  reservas.id, reservas.cliente, reservas.telefono,
-                mesas.nombre AS mesa, reservas.mesa_id, reservas.tur no,
+                mesas.nombre AS mesa, reservas.mesa_id, reservas.turno,
                 reservas.estado, reservas.sena_pagada, reservas.creada_en
         FROM reservas
         INNER JOIN mesas ON reservas.mesa_id = mesas.id
-        ORDER BY reservas.id DEC
+        ORDER BY reservas.id DESC
     
     `).all()
     res.json({ mesas, reservas });
@@ -79,7 +79,7 @@ app.get('/pai/mesas', (req, res) => {
 
 // 6. POST /api/reservar - Solicitar una reserva (Validación Anti-Doble Reserva
 
-app.post('api/reservar', (req, res) => {
+app.post('/api/reservar', (req, res) => {
     const { cliente, telefono, mesa_id, turno } = req.body;
 
     if (!cliente || !telefono || !mesa_id || !turno) {
@@ -88,10 +88,117 @@ app.post('api/reservar', (req, res) => {
 
     // Verificar que la mesa exista
     const mesa = db.prepare('SELECT * FROM mesas WHERE id = ?').get(mesa_id);
+    if (!mesa) {
+        return res.status(404).json({ error: 'La mesa seleccionada no existe.' });
+    }
 
     // REGLA DE ORO: Verificar que la mesa NO esté ocupada en ese mismo turno
     const ocupada = db.prepare(`
         SELECT * FROM reservas 
-        WHERE mesa_id = ? AND turno = ? AND estado != 'CANSELADA'
+        WHERE mesa_id = ? AND turno = ? AND estado != 'CANCELADA'
         `).get(mesa_id, turno);
-})
+
+    if (ocupada) {
+        return res.status(409).json({
+            error: `¡Ups! La ${mesa.nombre} ya está reservada para el turno de las ${turno} hs.`
+        });
+    }
+    // Crear la reserva en estado PENDIENTE
+    const resultado = db.prepare(`
+        INSERT INTO reservas(cliente, telefono, mesa_id, turno, estado, sena_pagada)
+        VALUES(?,?,?,?, 'PENDIENTE', 0)    
+        
+    `).run(cliente, telefono, mesa_id, turno);
+
+    res.status(201).json({
+        mensaje: `Reserva solicitada para ${cliente} en ${mesa.nombre} (${turno} hs). Estado: PENDIENTE de seña ($${mesa.precio_sena}).`,
+        reservaId: resultado.lastInsertRowid
+    });
+
+
+
+
+});
+
+
+
+
+
+// 7. PUT /api/reservas/:id/pagar - Pagar la seña y pasar a estado CONFIRMADA
+app.put('/api/reservas/:id/pagar', (req, res) => {
+    const reservaId = Number(req.params.id);
+    const { monto } = req.body;
+    const reserva = db.prepare(`
+        SELECT reservas.*, mesas.nombre AS mesa_nombre, mesas.precio_sena 
+        FROM reservas
+        INNER JOIN mesas ON reservas.mesa_id = mesas.id
+        WHERE reservas.id = ?   
+    `).get(reservaId);
+
+    if (!reserva) {
+        return res.status(404).json({ error: 'Reserva no encontrada.' });
+    }
+
+    if (reserva.estado === 'CANCELADA') {
+        return res.status(400).json({ error: 'No se puede pagar una reserva que fue CANCELADA.' });
+
+    }
+
+    if (reserva.estado === 'CONFIRMADA') {
+        return res.status(400).json({ error: 'Esta reserva ya está CONFIRMADA.' });
+    }
+
+    if (!monto || Number(monto) < reserva.precio_sena) {
+        return res.status(400).json({
+            error: `Monto insuficiente. La seña para ${reserva.mesa_nombre} es de $${reserva.precio_sena}.`
+        });
+    }
+
+    db.prepare(`
+        UPDATE reservas
+        SET estado = 'CONFIRMADA', sena_pagada = ?
+        WHERE id = ?
+    `).run(reserva.precio_sena, reservaId);
+
+    const vuelto = Number(monto) - reserva.precio_sena;
+    res.json({
+        mensaje: `¡Seña abonada con éxito! Reserva #${reservaId} (${reserva.mesa_nombre} - ${reserva.turno} hs) CONFIRMADA. Vuelto: $${vuelto}.`
+    });
+});
+
+
+// 8. PUT /api/reservas/:id/cancelar - Cancelar reserva y liberar el turno
+app.put('/api/reservas/:id/cancelar', (req, res) => {
+    const reservaId = Number(req.params.id);
+
+    const reserva = db.prepare('SELECT * FROM reservas WHERE id =?').get(reservaId);
+    if (!reserva) {
+        return res.status(404).json({ error: 'Reserva no encontrada.' });
+    }
+
+    if (reserva.estado === 'CANCELADA') {
+        return res.status(400).json({ error: 'La reserva ya estaba cancelada.' });
+    }
+
+    db.prepare(`
+        UPDATE reservas
+        SET estado = 'CANCELADA'
+        WHERE id = ?    
+        
+    `).run(reservaId);
+
+    res.json({
+        mensaje: `Reserva #${reservaId} de ${reserva.cliente} fue CANCELADA. El turno de las ${reserva.turno} hs volvió a quedar libre.`
+
+    });
+});
+
+
+
+// 9. Inicializar Mesas y Encender Servidor
+
+const PORT = process.env.PORT || 3002;
+inicializarMesas();
+app.listen(PORT, () => {
+    console.log(`📅 Servidor de Reservas VIP corriendo en http://localhost:${PORT}`);
+});

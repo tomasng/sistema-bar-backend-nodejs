@@ -366,3 +366,34 @@
        más arranque del servidor).
 
 ================================================================================
+
+[18/11/2026 - Cierre de Proyecto Final 2 Full-Stack (app26_proyecto_reservas.js + reservas_fullstack.html)]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Completó el Bloque 2 de `app26_proyecto_reservas.js` y pidió buscar errores.
+   - Mr Charly: Revisó las líneas 57 a 118 y señaló 7 detalles puntuales (`'/pai/mesas'`,
+     `reservas.tur no`, `DEC` -> `DESC`, `'api/reservar'` -> `'/api/reservar'`, chequeo
+     `if (!mesa)`, `'CANSELADA'` -> `'CANCELADA'` y `.run.(` -> `.run(`).
+   - Usuario: Corrigió los 7 puntos y luego escribió el Bloque 3 completo (líneas 127 a 204).
+   - Mr Charly: Revisó el Bloque 3 y señaló 4 detalles en `PUT /api/reservas/:id/pagar`
+     (`req.Params.id` -> `req.params.id`, `AS mesas_nombre` -> `AS mesa_nombre`,
+     `INSERT JOIN` -> `INNER JOIN` y `reservadoId` -> `reservaId`).
+   - Usuario: Corrigió los 4 puntos; se verificó con `node --check Node/app26_proyecto_reservas.js`
+     (0 errores de sintaxis) y dio permiso explícito (`tenés mi permiso`) para crear el
+     Frontend `Node/reservas_fullstack.html`.
+   - Mr Charly: Creó `Node/reservas_fullstack.html`, levantó el servidor en
+     `http://localhost:3002` y el usuario probó en vivo la creación de reservas, el
+     bloqueo anti-overbooking (`409 Conflict`), el pago de seña (`CONFIRMADA`) y la
+     cancelación (`CANCELADA`).
+
+2. Archivos Actualizados en la Sesión:
+   - Node/app26_proyecto_reservas.js: Servidor de Reservas VIP completo (204 líneas).
+   - Node/reservas_fullstack.html: Interfaz web Full-Stack para gestión de reservas y señas.
+   - Node/reservas_proyecto2.db: Base de datos SQLite creada e inicializada con las 4 mesas.
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Completar el último punto de la Fase 6 del Roadmap: **Armado de CV, LinkedIn y
+     Postulaciones** (estrategia para puestos Trainee / Jr y captación de clientes freelance).
+
+================================================================================
