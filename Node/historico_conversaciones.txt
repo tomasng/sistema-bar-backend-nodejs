@@ -397,3 +397,34 @@
      Postulaciones** (estrategia para puestos Trainee / Jr y captación de clientes freelance).
 
 ================================================================================
+
+[19/11/2026 - Inicio del Proyecto Final 3: Marketplace E-Commerce Completo (app27_proyecto_ecommerce.js)]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Propuesto crear un proyecto más completo: una plataforma con menú,
+     usuarios de tipo `COMPRADOR` y `VENDEDOR`, carga de imágenes para venta de
+     productos, opciones de pago (tarjeta de crédito o débito), comentarios,
+     consultas y puntuación de productos por parte de quienes compraron.
+   - Mr Charly: Diseñó la arquitectura del **Proyecto Final 3: Marketplace E-Commerce
+     Completo** en `Node/app27_proyecto_ecommerce.js` con soporte para imágenes de
+     hasta 10MB (`express.json({ limit: '10mb' })`) y una base de datos relacional
+     de 5 tablas en SQLite (`usuarios`, `productos`, `compras`, `consultas`, `resenas`).
+   - Usuario: Escribió el Bloque 1 (líneas 1 a 73) y corrigió los 4 detalles de tipeo
+     (`const db`, `CREATE TABLE IF NOT EXISTS productos`, `CREATE TABLE IF NOT EXISTS compras`
+     y `FOREIGN KEY (producto_id)` en `consultas`), dejando el Bloque 1 listo y sin errores.
+   - Mr Charly: Dejó presentado en el chat el **Bloque 2** (`inicializarDatos`,
+     `verificarToken`, `POST /api/registro`, `POST /api/login`, `GET /api/productos`
+     con promedio de estrellas y `POST /api/productos` para vendedores).
+
+2. Archivos Actualizados en la Sesión:
+   - Node/app27_proyecto_ecommerce.js: Creado con el Bloque 1 completo y corregido
+     (5 tablas relacionales SQLite, líneas 1 a 73).
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Escribir el **Bloque 2** (Semilla + Auth Comprador/Vendedor + Catálogo y
+     Publicación de productos con imagen) y el **Bloque 3** (Compras con tarjeta de
+     crédito/débito, Consultas y Reseñas verificadas con estrellas) en
+     `Node/app27_proyecto_ecommerce.js`.
+
+================================================================================
