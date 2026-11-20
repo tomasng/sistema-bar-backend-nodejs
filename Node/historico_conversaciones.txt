@@ -428,3 +428,33 @@
      `Node/app27_proyecto_ecommerce.js`.
 
 ================================================================================
+
+[20/11/2026 - Proyecto Final 3: Integración de Nodemailer (Correo de Bienvenida) y Avance de Bloque 2 en app27]
+--------------------------------------------------------------------------------
+1. Resumen del Diálogo:
+   - Usuario: Consultó si el vendedor y el cliente crean su propio usuario y propuso
+     que al registrarse les llegue un mensaje al correo electrónico como bienvenida.
+   - Mr Charly: Explicó cómo cada usuario se registra eligiendo su rol (`COMPRADOR` o
+     `VENDEDOR`) e instaló la librería oficial `nodemailer` en `Node/package.json`.
+   - Usuario: Actualizó la tabla `usuarios` agregando `email TEXT UNIQUE NOT NULL`,
+     importó `nodemailer` y escribió en `Node/app27_proyecto_ecommerce.js` (hasta la
+     línea 181):
+     * `enviarCorreoBienvenida(nombre, email, rol)` con `nodemailer.createTestAccount()`
+       y envío de correo HTML personalizado con vista previa (`getTestMessageUrl`).
+     * `inicializarDatos()` con `email` para el vendedor y comprador semilla y los
+       2 productos iniciales con foto.
+     * `verificarToken(req, res, next)` para validar la sesión JWT.
+
+2. Archivos Actualizados en la Sesión:
+   - Node/package.json y Node/package-lock.json: Instalado `nodemailer`.
+   - Node/app27_proyecto_ecommerce.js: Avance desde línea 73 hasta línea 181
+     (`enviarCorreoBienvenida`, `inicializarDatos`, `verificarToken`).
+   - Node/historico_conversaciones.txt, Node/resumen_aprendizaje.txt y ROADMAP.md.
+
+3. Próximo Objetivo Acordado:
+   - Continuar en la línea 181 de `Node/app27_proyecto_ecommerce.js` con la segunda
+     mitad del **Bloque 2** (`GET /`, `POST /api/registro` con disparo de
+     `enviarCorreoBienvenida`, `POST /api/login`, `GET /api/productos` y
+     `POST /api/productos`) y luego el **Bloque 3** (Compras, Consultas y Reseñas).
+
+================================================================================

@@ -1104,7 +1104,7 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
      reales codificadas en Base64/DataURL desde la PC o el celular del vendedor.
 
 2. Arquitectura Relacional de 5 Tablas en SQLite (`ecommerce_proyecto3.db`):
-   - `usuarios`: `id`, `nombre` (`UNIQUE`), `password_hash` y `rol` (`'COMPRADOR'` o `'VENDEDOR'`).
+   - `usuarios`: `id`, `nombre` (`UNIQUE`), `email` (`UNIQUE`), `password_hash` y `rol` (`'COMPRADOR'` o `'VENDEDOR'`).
    - `productos`: `id`, `vendedor_id` (`FOREIGN KEY REFERENCES usuarios(id)`), `nombre`,
      `descripcion`, `precio`, `stock` e `imagen`.
    - `compras`: `id`, `comprador_id`, `producto_id`, `cantidad`, `metodo_pago`
@@ -1112,4 +1112,11 @@ concurrencia (sin colisiones entre usuarios) y velocidad extrema (milisegundos c
    - `consultas`: `id`, `producto_id`, `usuario_nombre`, `pregunta`, `respuesta` (del vendedor) y `fecha`.
    - `resenas`: `id`, `producto_id`, `comprador_id`, `puntuacion` (`1` a `5` estrellas),
      `comentario` y `fecha` (restringida a usuarios que figuren en `compras` para ese producto).
+
+3. Envío de Correos Electrónicos de Bienvenida con `nodemailer`:
+   - `nodemailer` permite enviar correos SMTP desde Node.js.
+   - Con `await nodemailer.createTestAccount()` y `nodemailer.createTransport(...)` se
+     genera un servidor SMTP de prueba (Ethereal) que envía el correo HTML personalizado
+     según el rol (`COMPRADOR` o `VENDEDOR`) y devuelve un enlace real de vista previa
+     mediante `nodemailer.getTestMessageUrl(info)`.
 
